@@ -1,1 +1,61 @@
-
+{
+  "apiKey": "YOUR_GOOGLE_MAPS_API_KEY",
+  "businessName": "🍕 Pizza Palace",
+  "address": "Арбат, 25, Москва, Россия",
+  "icon": "🍕",
+  "center": {
+    "lat": 55.7522,
+    "lng": 37.5911
+  },
+  "zoom": 17,
+  "mapTypeId": "roadmap",
+  "mapStyle": "retro",
+  "markers": [
+    {
+      "lat": 55.7522,
+      "lng": 37.5911,
+      "title": "Pizza Palace",
+      "icon": "🍕",
+      "color": "#ff6b35",
+      "infoWindow": "<strong>Pizza Palace</strong><br>Лучшая пицца в городе!<br>🕐 10:00-23:00<br>🛵 Доставка от 1000₽"
+    }
+  ],
+  "buttons": [
+    {
+      "text": "Заказать доставку",
+      "icon": "🛵",
+      "url": "https://delivery.pizzapalace.ru",
+      "type": ""
+    },
+    {
+      "text": "Забронировать стол",
+      "icon": "🪑",
+      "url": "https://booking.pizzapalace.ru",
+      "type": "secondary"
+    }
+  ],
+  "info": {
+    "Кухня": "Итальянская, Пицца",
+    "Доставка": "Бесплатно от 1000₽",
+    "Время работы": "10:00-23:00 ежедневно",
+    "Средний чек": "800-1500₽",
+    "Wi-Fi": "Бесплатный"
+  },
+  "controls": {
+    "zoom": true,
+    "streetView": true,
+    "fullscreen": false,
+    "mapType": false
+  },
+  "styling": {
+    "primaryColor": "#ff6b35",
+    "secondaryColor": "#f7931e",
+    "borderRadius": "20px",
+    "titleSize": "1.5em",
+    "fontFamily": "'Inter', sans-serif",
+    "mapHeight": "320px",
+    "buttonBackground": "#ff6b35",
+    "buttonSecondary": "#27ae60",
+    "maxWidth": "500px"
+  }
+}
