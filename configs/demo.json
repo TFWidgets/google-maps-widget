@@ -1,60 +1,27 @@
 {
-  "apiKey": "YOUR_GOOGLE_MAPS_API_KEY",
-  "businessName": "🏢 Tech Hub Office",
+  "title": "🏢 Tech Hub Office",
   "address": "Staroměstské náměstí 1, Prague, Czechia",
-  "icon": "🏢",
-  "center": {
+  "coordinates": {
     "lat": 50.0875,
     "lng": 14.4213
   },
-  "zoom": 16,
-  "mapTypeId": "roadmap",
-  "mapStyle": "silver",
-  "markers": [
-    {
-      "lat": 50.0875,
-      "lng": 14.4213,
-      "title": "Main Office",
-      "icon": "🏢",
-      "color": "#4285f4",
-      "infoWindow": "<strong>Tech Hub Office</strong><br>Main company office<br>📞 +420 123 456 789"
-    }
-  ],
-  "buttons": [
-    {
-      "text": "Directions",
-      "icon": "🚗",
-      "url": "https://maps.google.com/maps?daddr=50.0875,14.4213",
-      "type": ""
-    },
-    {
-      "text": "Call",
-      "icon": "📞",
-      "url": "tel:+420123456789",
-      "type": "secondary"
-    }
-  ],
-  "info": {
-    "Phone": "+420 123 456 789",
-    "Email": "info@techhub.cz",
-    "Business Hours": "Mon-Fri 9:00-18:00",
-    "Parking": "Free for clients"
+  "zoom": 15,
+  "phone": "+420 123 456 789",
+  "email": "info@techhub.cz",
+  "website": "https://techhub.cz",
+  "businessHours": "Mon-Fri 9:00-18:00",
+  "parking": "Free for clients",
+  "showDirections": true,
+  "showCall": true,
+  "showWebsite": true,
+  "theme": {
+    "primary": "#4285f4",
+    "secondary": "#34a853",
+    "background": "#ffffff",
+    "text": "#333333",
+    "headerBg": "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+    "borderRadius": 16,
+    "mapHeight": 300
   },
-  "controls": {
-    "zoom": true,
-    "streetView": false,
-    "fullscreen": true,
-    "mapType": false
-  },
-  "styling": {
-    "primaryColor": "#4285f4",
-    "secondaryColor": "#34a853",
-    "borderRadius": "16px",
-    "titleSize": "1.4em",
-    "fontFamily": "'Roboto', sans-serif",
-    "mapHeight": "300px",
-    "buttonBackground": "#4285f4",
-    "buttonSecondary": "#34a853",
-    "maxWidth": "450px"
-  }
+  "fontFamily": "'Inter', system-ui, sans-serif"
 }
