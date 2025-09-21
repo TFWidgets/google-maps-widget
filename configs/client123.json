@@ -1,61 +1,26 @@
 {
-  "apiKey": "YOUR_GOOGLE_MAPS_API_KEY",
-  "businessName": "🍕 Pizza Palace",
-  "address": "Арбат, 25, Москва, Россия",
-  "icon": "🍕",
-  "center": {
-    "lat": 55.7522,
-    "lng": 37.5911
+  "title": "🍕 Pizza Palace",
+  "address": "Wenceslas Square 25, Prague, Czechia",
+  "coordinates": {
+    "lat": 50.0813,
+    "lng": 14.4267
   },
-  "zoom": 17,
-  "mapTypeId": "roadmap",
-  "mapStyle": "retro",
-  "markers": [
-    {
-      "lat": 55.7522,
-      "lng": 37.5911,
-      "title": "Pizza Palace",
-      "icon": "🍕",
-      "color": "#ff6b35",
-      "infoWindow": "<strong>Pizza Palace</strong><br>Лучшая пицца в городе!<br>🕐 10:00-23:00<br>🛵 Доставка от 1000₽"
-    }
-  ],
-  "buttons": [
-    {
-      "text": "Заказать доставку",
-      "icon": "🛵",
-      "url": "https://delivery.pizzapalace.ru",
-      "type": ""
-    },
-    {
-      "text": "Забронировать стол",
-      "icon": "🪑",
-      "url": "https://booking.pizzapalace.ru",
-      "type": "secondary"
-    }
-  ],
-  "info": {
-    "Кухня": "Итальянская, Пицца",
-    "Доставка": "Бесплатно от 1000₽",
-    "Время работы": "10:00-23:00 ежедневно",
-    "Средний чек": "800-1500₽",
-    "Wi-Fi": "Бесплатный"
+  "zoom": 16,
+  "phone": "+420 987 654 321",
+  "email": "order@pizzapalace.cz",
+  "businessHours": "Daily 11:00-23:00",
+  "parking": "Street parking available",
+  "showDirections": true,
+  "showCall": true,
+  "showWebsite": false,
+  "theme": {
+    "primary": "#ff6b6b",
+    "secondary": "#25d366",
+    "background": "#ffffff",
+    "text": "#333333",
+    "headerBg": "linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%)",
+    "borderRadius": 18,
+    "mapHeight": 280
   },
-  "controls": {
-    "zoom": true,
-    "streetView": true,
-    "fullscreen": false,
-    "mapType": false
-  },
-  "styling": {
-    "primaryColor": "#ff6b35",
-    "secondaryColor": "#f7931e",
-    "borderRadius": "20px",
-    "titleSize": "1.5em",
-    "fontFamily": "'Inter', sans-serif",
-    "mapHeight": "320px",
-    "buttonBackground": "#ff6b35",
-    "buttonSecondary": "#27ae60",
-    "maxWidth": "500px"
-  }
+  "fontFamily": "'Roboto', sans-serif"
 }
