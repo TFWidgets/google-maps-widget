@@ -1,0 +1,27 @@
+{
+  "title": "OMGG",
+  "address": "Address fr",
+  "coordinates": {
+    "lat": 52.0833,
+    "lng": 11.113
+  },
+  "zoom": 15,
+  "phone": "+420 123 456 123",
+  "email": "info@techhub.cz",
+  "website": "https://techhub.cz",
+  "businessHours": "Mon-Fri 9:00-18:00",
+  "parking": "Not free",
+  "showDirections": true,
+  "showCall": false,
+  "showWebsite": false,
+  "theme": {
+    "primary": "#1f3860",
+    "secondary": "#1e6b33",
+    "background": "#ffffff",
+    "text": "#333333",
+    "headerBg": "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+    "borderRadius": 16,
+    "mapHeight": 300
+  },
+  "fontFamily": "'Inter', system-ui, sans-serif"
+}
