@@ -1,26 +1,58 @@
 {
-  "title": "🍕 Pizza Palace",
-  "address": "Wenceslas Square 25, Prague, Czechia",
+  "title": "Bella Vista Restaurant",
+  "address": "Via Roma 123, Milan, Italy",
   "coordinates": {
-    "lat": 50.0813,
-    "lng": 14.4267
+    "lat": 45.4642,
+    "lng": 9.1900
   },
   "zoom": 16,
-  "phone": "+420 987 654 321",
-  "email": "order@pizzapalace.cz",
+  "phone": "+39 02 1234 5678",
+  "email": "info@bellavista.it",
+  "website": "https://bellavista.it",
   "businessHours": "Daily 11:00-23:00",
-  "parking": "Street parking available",
+  "parking": "Valet parking available",
   "showDirections": true,
   "showCall": true,
-  "showWebsite": false,
-  "theme": {
-    "primary": "#ff6b6b",
-    "secondary": "#25d366",
-    "background": "#ffffff",
-    "text": "#333333",
-    "headerBg": "linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%)",
-    "borderRadius": 18,
-    "mapHeight": 280
-  },
-  "fontFamily": "'Roboto', sans-serif"
+  "showWebsite": true,
+  "icon": "",
+  "iconHtml": "&#127829;",
+  "style": {
+    "fontFamily": "'Roboto', system-ui, sans-serif",
+    "valueFontFamily": "'Roboto', system-ui, sans-serif",
+    "colors": {
+      "background": "#ffffff",
+      "text": "white",
+      "headerBackground": "linear-gradient(135deg, #dc2626 0%, #b91c1c 50%, #991b1b 100%)",
+      "blockBackground": "rgba(255, 255, 255, 0.25)",
+      "blockBorder": "rgba(255, 255, 255, 0.40)",
+      "blockHover": "rgba(255, 255, 255, 0.35)",
+      "borderHover": "rgba(255, 255, 255, 0.60)",
+      "btnPrimary": "#dc2626",
+      "btnSecondary": "#059669",
+      "btnTertiary": "#7c3aed",
+      "detailText": "#1f2937",
+      "detailLabel": "#6b7280"
+    },
+    "borderRadius": {
+      "widget": 20,
+      "blocks": 14
+    },
+    "sizes": {
+      "fontSize": 1.1,
+      "padding": 28,
+      "blockPadding": 16,
+      "gap": 18,
+      "mapHeight": 350,
+      "iconSize": 52,
+      "actionsGap": 12,
+      "actionsPadding": 20,
+      "detailsPadding": 24
+    },
+    "shadow": {
+      "widget": "0 25px 70px rgba(220,38,38,0.20)",
+      "widgetHover": "0 35px 90px rgba(220,38,38,0.25)",
+      "text": "0 3px 12px rgba(0,0,0,0.4)",
+      "btnHover": "0 10px 30px rgba(0,0,0,0.22)"
+    }
+  }
 }
