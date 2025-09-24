@@ -1,22 +1,22 @@
 {
-  "title": "OMGG",
-  "address": "Address fr",
+  "title": "🏢 Tech ",
+  "address": "Staroměstské náměstí 1, Prague, Czechia",
   "coordinates": {
-    "lat": 52.0833,
-    "lng": 11.113
+    "lat": 50.0875,
+    "lng": 14.4213
   },
   "zoom": 15,
-  "phone": "+420 123 456 123",
+  "phone": "+420 123 456 789",
   "email": "info@techhub.cz",
   "website": "https://techhub.cz",
   "businessHours": "Mon-Fri 9:00-18:00",
-  "parking": "Not free",
+  "parking": "Free for clients",
   "showDirections": true,
-  "showCall": false,
-  "showWebsite": false,
+  "showCall": true,
+  "showWebsite": true,
   "theme": {
-    "primary": "#1f3860",
-    "secondary": "#1e6b33",
+    "primary": "#4285f4",
+    "secondary": "#34a853",
     "background": "#ffffff",
     "text": "#333333",
     "headerBg": "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
