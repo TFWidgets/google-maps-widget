@@ -1,5 +1,5 @@
 {
-  "title": "🏢 Tech Hub Office",
+  "title": "Tech Hub Office",
   "address": "Staroměstské náměstí 1, Prague, Czechia",
   "coordinates": {
     "lat": 50.0875,
@@ -13,15 +13,46 @@
   "parking": "Free for clients",
   "showDirections": true,
   "showCall": true,
-  "showWebsite": true,
-  "theme": {
-    "primary": "#4285f4",
-    "secondary": "#34a853",
-    "background": "#ffffff",
-    "text": "#333333",
-    "headerBg": "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
-    "borderRadius": 16,
-    "mapHeight": 300
-  },
-  "fontFamily": "'Inter', system-ui, sans-serif"
+  "showWebsite": false,
+  "icon": "",
+  "iconHtml": "&#127970;",
+  "style": {
+    "fontFamily": "'Inter', system-ui, sans-serif",
+    "valueFontFamily": "'Inter', system-ui, sans-serif",
+    "colors": {
+      "background": "#ffffff",
+      "text": "white",
+      "headerBackground": "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+      "blockBackground": "rgba(255,255,255,0.22)",
+      "blockBorder": "rgba(255,255,255,0.35)",
+      "blockHover": "rgba(255,255,255,0.30)",
+      "borderHover": "rgba(255,255,255,0.55)",
+      "btnPrimary": "#4285f4",
+      "btnSecondary": "#34a853",
+      "btnTertiary": "#6366f1",
+      "detailText": "#333333",
+      "detailLabel": "#666"
+    },
+    "borderRadius": {
+      "widget": 16,
+      "blocks": 12
+    },
+    "sizes": {
+      "fontSize": 1.0,
+      "padding": 24,
+      "blockPadding": 14,
+      "gap": 16,
+      "mapHeight": 300,
+      "iconSize": 48,
+      "actionsGap": 10,
+      "actionsPadding": 18,
+      "detailsPadding": 22
+    },
+    "shadow": {
+      "widget": "0 20px 60px rgba(102,126,234,0.15)",
+      "widgetHover": "0 30px 80px rgba(102,126,234,0.20)",
+      "text": "0 2px 8px rgba(0,0,0,0.3)",
+      "btnHover": "0 8px 24px rgba(0,0,0,0.18)"
+    }
+  }
 }
