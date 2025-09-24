@@ -1,0 +1,27 @@
+{
+  "title": "hahahahahaha",
+  "address": "Staroměstské náměstí 1, Prague, Czechia",
+  "coordinates": {
+    "lat": 50.0875,
+    "lng": 14.4213
+  },
+  "zoom": 15,
+  "phone": "",
+  "email": "info@techhub.cz",
+  "website": "https://techhub.cz",
+  "businessHours": "Mon-Fri 9:00-18:00",
+  "parking": "Free for clients",
+  "showDirections": true,
+  "showCall": true,
+  "showWebsite": true,
+  "theme": {
+    "primary": "#4285f4",
+    "secondary": "#34a853",
+    "background": "#ffffff",
+    "text": "#333333",
+    "headerBg": "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+    "borderRadius": 16,
+    "mapHeight": 300
+  },
+  "fontFamily": "'Inter', system-ui, sans-serif"
+}
