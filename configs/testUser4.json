@@ -1,5 +1,5 @@
 {
-  "title": "🏢 Tech Hu",
+  "title": "🏢 Cool house",
   "address": "Staroměstské náměstí 1, Prague, Czechia",
   "coordinates": {
     "lat": 50.0875,
@@ -10,13 +10,13 @@
   "email": "info@techhub.cz",
   "website": "https://techhub.cz",
   "businessHours": "Mon-Fri 9:00-18:00",
-  "parking": "Free for clients",
-  "showDirections": true,
-  "showCall": false,
+  "parking": "Not free for clients",
+  "showDirections": false,
+  "showCall": true,
   "showWebsite": false,
   "theme": {
-    "primary": "#3f5f92",
-    "secondary": "#00ff44",
+    "primary": "#bc43f4",
+    "secondary": "#c5650d",
     "background": "#ffffff",
     "text": "#333333",
     "headerBg": "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
