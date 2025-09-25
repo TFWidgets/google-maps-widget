@@ -3,95 +3,95 @@
 
     // Базовые CSS стили с унифицированными CSS-переменными
     const inlineCSS = `
-        .mw-container {
-            font-family: var(--mw-font, 'Inter', system-ui, sans-serif);
-            max-width: var(--mw-max-width, 520px);
-            margin: var(--mw-margin, 20px auto);
+        .bhw-container {
+            font-family: var(--bhw-font, 'Inter', system-ui, sans-serif);
+            max-width: var(--bhw-max-width, 520px);
+            margin: var(--bhw-margin, 20px auto);
             width: 100%;
         }
         
-        .mw-widget {
-            background: var(--mw-bg, #ffffff);
-            border-radius: var(--mw-widget-radius, 16px);
+        .bhw-widget {
+            background: var(--bhw-bg, #ffffff);
+            border-radius: var(--bhw-widget-radius, 16px);
             overflow: hidden;
-            box-shadow: var(--mw-shadow, 0 20px 60px rgba(0,0,0,0.15));
+            box-shadow: var(--bhw-shadow, 0 20px 60px rgba(0,0,0,0.15));
             position: relative;
         }
         
-        .mw-header {
-            background: var(--mw-header-bg, linear-gradient(135deg, #667eea 0%, #764ba2 100%));
-            padding: var(--mw-padding, 24px);
-            color: var(--mw-text-color, white);
+        .bhw-header {
+            background: var(--bhw-header-bg, linear-gradient(135deg, #667eea 0%, #764ba2 100%));
+            padding: var(--bhw-padding, 24px);
+            color: var(--bhw-text-color, white);
             display: flex;
             align-items: center;
-            gap: var(--mw-gap, 16px);
+            gap: var(--bhw-gap, 16px);
             position: relative;
             overflow: hidden;
         }
         
-        .mw-header::before {
+        .bhw-header::before {
             content: '';
             position: absolute;
             inset: 0;
-            background: var(--mw-overlay, 
+            background: var(--bhw-overlay, 
                 radial-gradient(circle at 25% 25%, rgba(255, 255, 255, 0.15) 0%, transparent 50%),
                 radial-gradient(circle at 75% 75%, rgba(255, 255, 255, 0.1) 0%, transparent 50%)
             );
             pointer-events: none;
         }
         
-        .mw-icon {
-            width: var(--mw-icon-size, 48px);
-            height: var(--mw-icon-size, 48px);
-            background: var(--mw-block-bg, rgba(255,255,255,0.22));
-            border-radius: var(--mw-block-radius, 12px);
+        .bhw-icon {
+            width: var(--bhw-icon-size, 48px);
+            height: var(--bhw-icon-size, 48px);
+            background: var(--bhw-block-bg, rgba(255,255,255,0.22));
+            border-radius: var(--bhw-block-radius, 12px);
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: var(--mw-icon-font-size, 20px);
+            font-size: var(--bhw-icon-font-size, 20px);
             backdrop-filter: blur(12px);
-            border: var(--mw-block-border, 1px solid rgba(255,255,255,0.35));
+            border: var(--bhw-block-border, 1px solid rgba(255,255,255,0.35));
             position: relative;
             z-index: 1;
         }
         
-        .mw-info {
+        .bhw-info {
             flex: 1;
             position: relative;
             z-index: 1;
         }
         
-        .mw-title {
+        .bhw-title {
             margin: 0 0 6px 0;
-            font-size: var(--mw-title-size, 1.35em);
-            font-weight: var(--mw-title-weight, 700);
-            text-shadow: var(--mw-text-shadow, 0 2px 8px rgba(0,0,0,0.3));
-            letter-spacing: var(--mw-title-spacing, 0.2px);
-            color: var(--mw-title-color, inherit);
+            font-size: var(--bhw-title-size, 1.35em);
+            font-weight: var(--bhw-title-weight, 700);
+            text-shadow: var(--bhw-text-shadow, 0 2px 8px rgba(0,0,0,0.3));
+            letter-spacing: var(--bhw-title-spacing, 0.2px);
+            color: var(--bhw-title-color, inherit);
         }
         
-        .mw-address {
+        .bhw-address {
             margin: 0;
-            opacity: var(--mw-subtitle-opacity, 0.92);
-            font-size: var(--mw-subtitle-size, 0.9em);
+            opacity: var(--bhw-subtitle-opacity, 0.92);
+            font-size: var(--bhw-subtitle-size, 0.9em);
             line-height: 1.35;
-            font-weight: var(--mw-subtitle-weight, 500);
-            color: var(--mw-subtitle-color, inherit);
+            font-weight: var(--bhw-subtitle-weight, 500);
+            color: var(--bhw-subtitle-color, inherit);
         }
         
-        .mw-map-container {
+        .bhw-map-container {
             position: relative;
-            height: var(--mw-map-height, 300px);
+            height: var(--bhw-map-height, 300px);
             background: #f0f2f5;
         }
         
-        .mw-map {
+        .bhw-map {
             width: 100%;
             height: 100%;
             z-index: 1;
         }
         
-        .mw-error {
+        .bhw-error {
             position: absolute;
             inset: 0;
             display: flex;
@@ -103,37 +103,37 @@
             z-index: 2;
         }
         
-        .mw-error-icon {
+        .bhw-error-icon {
             font-size: 36px;
             margin-bottom: 12px;
             opacity: 0.7;
         }
         
-        .mw-actions {
+        .bhw-actions {
             display: flex;
-            gap: var(--mw-actions-gap, 10px);
-            padding: var(--mw-actions-padding, 18px);
+            gap: var(--bhw-actions-gap, 10px);
+            padding: var(--bhw-actions-padding, 18px);
             background: #f8f9fa;
         }
         
-        .mw-btn {
+        .bhw-btn {
             flex: 1;
-            padding: var(--mw-btn-padding, 14px 18px);
-            border-radius: var(--mw-btn-radius, 11px);
+            padding: var(--bhw-btn-padding, 14px 18px);
+            border-radius: var(--bhw-btn-radius, 11px);
             text-decoration: none;
-            font-weight: var(--mw-btn-weight, 700);
-            font-size: var(--mw-btn-size, 0.9em);
+            font-weight: var(--bhw-btn-weight, 700);
+            font-size: var(--bhw-btn-size, 0.9em);
             text-align: center;
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             border: none;
             cursor: pointer;
             position: relative;
             overflow: hidden;
-            font-family: var(--mw-value-font, inherit);
+            font-family: var(--bhw-value-font, inherit);
             color: white;
         }
         
-        .mw-btn::before {
+        .bhw-btn::before {
             content: '';
             position: absolute;
             inset: 0;
@@ -141,89 +141,89 @@
             pointer-events: none;
         }
         
-        .mw-btn-directions {
-            background: var(--mw-btn-primary, #4285f4);
+        .bhw-btn-directions {
+            background: var(--bhw-btn-primary, #4285f4);
         }
         
-        .mw-btn-call {
-            background: var(--mw-btn-secondary, #34a853);
+        .bhw-btn-call {
+            background: var(--bhw-btn-secondary, #34a853);
         }
         
-        .mw-btn-website {
-            background: var(--mw-btn-tertiary, #6366f1);
+        .bhw-btn-website {
+            background: var(--bhw-btn-tertiary, #6366f1);
         }
         
-        .mw-btn:hover {
+        .bhw-btn:hover {
             transform: translateY(-2px);
-            box-shadow: var(--mw-btn-shadow-hover, 0 8px 24px rgba(0,0,0,0.18));
+            box-shadow: var(--bhw-btn-shadow-hover, 0 8px 24px rgba(0,0,0,0.18));
         }
         
-        .mw-details {
-            padding: var(--mw-details-padding, 22px);
+        .bhw-details {
+            padding: var(--bhw-details-padding, 22px);
         }
         
-        .mw-detail {
+        .bhw-detail {
             display: flex;
             justify-content: space-between;
             align-items: center;
             padding: 10px 0;
             border-bottom: 1px solid #f0f0f0;
-            font-size: var(--mw-detail-size, 0.9em);
+            font-size: var(--bhw-detail-size, 0.9em);
         }
         
-        .mw-detail:last-child {
+        .bhw-detail:last-child {
             border-bottom: none;
         }
         
-        .mw-detail-label {
-            font-weight: var(--mw-detail-label-weight, 600);
-            color: var(--mw-detail-label-color, #666);
+        .bhw-detail-label {
+            font-weight: var(--bhw-detail-label-weight, 600);
+            color: var(--bhw-detail-label-color, #666);
         }
         
-        .mw-detail-value {
-            color: var(--mw-detail-value-color, #333333);
+        .bhw-detail-value {
+            color: var(--bhw-detail-value-color, #333333);
             text-align: right;
-            font-weight: var(--mw-detail-value-weight, 500);
+            font-weight: var(--bhw-detail-value-weight, 500);
         }
         
-        .mw-loading {
+        .bhw-loading {
             text-align: center;
-            padding: var(--mw-loading-padding, 40px);
-            color: var(--mw-loading-color, #666);
+            padding: var(--bhw-loading-padding, 40px);
+            color: var(--bhw-loading-color, #666);
         }
         
-        .mw-spinner {
+        .bhw-spinner {
             width: 40px;
             height: 40px;
             border: 3px solid rgba(0,0,0,0.1);
             border-top: 3px solid #4285f4;
             border-radius: 50%;
-            animation: mw-spin 1s linear infinite;
+            animation: bhw-spin 1s linear infinite;
             margin: 0 auto 15px;
         }
         
-        @keyframes mw-spin {
+        @keyframes bhw-spin {
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
         
         @media (max-width: 480px) {
-            .mw-container {
+            .bhw-container {
                 max-width: calc(100vw - 32px);
-                margin: var(--mw-margin-mobile, 16px auto);
+                margin: var(--bhw-margin-mobile, 16px auto);
             }
-            .mw-header {
-                padding: var(--mw-padding-mobile, 20px);
+            .bhw-header {
+                padding: var(--bhw-padding-mobile, 20px);
             }
-            .mw-title {
-                font-size: var(--mw-title-size-mobile, 1.2em);
+            .bhw-title {
+                font-size: var(--bhw-title-size-mobile, 1.2em);
             }
-            .mw-actions {
+            .bhw-actions {
                 flex-direction: column;
-                gap: var(--mw-actions-gap-mobile, 8px);
+                gap: var(--bhw-actions-gap-mobile, 8px);
             }
-            .mw-details {
-                padding: var(--mw-details-padding-mobile, 18px);
+            .bhw-details {
+                padding: var(--bhw-details-padding-mobile, 18px);
             }
         }
     `;
@@ -255,7 +255,7 @@
                     resolve();
                 };
                 script.onerror = () => {
-                    console.error('[MapsWidget] Failed to load Leaflet');
+                    console.error('[BusinessHoursMapsWidget] Failed to load Leaflet');
                     resolve(); // Resolve anyway, map will show error
                 };
                 document.head.appendChild(script);
@@ -274,28 +274,28 @@
 
         let clientId = currentScript.dataset.id;
         if (!clientId) {
-            console.error('[MapsWidget] data-id обязателен');
+            console.error('[BusinessHoursMapsWidget] data-id обязателен');
             return;
         }
 
         clientId = normalizeId(clientId);
 
         // Защита от повторного выполнения
-        if (currentScript.dataset.mwMounted === '1') return;
-        currentScript.dataset.mwMounted = '1';
+        if (currentScript.dataset.bhwMounted === '1') return;
+        currentScript.dataset.bhwMounted = '1';
 
-        console.log(`[MapsWidget] 🚀 Инициализация виджета "${clientId}"`);
+        console.log(`[BusinessHoursMapsWidget] 🚀 Инициализация виджета "${clientId}"`);
 
-        // Добавляем базовые стили один раз в head
-        if (!document.querySelector('#maps-widget-styles')) {
+        // Добавляем базовые стили один раз в head с уникальным ID
+        if (!document.querySelector('#business-hours-maps-widget-styles')) {
             const style = document.createElement('style');
-            style.id = 'maps-widget-styles';
+            style.id = 'business-hours-maps-widget-styles';
             style.textContent = inlineCSS;
             document.head.appendChild(style);
         }
 
         const baseUrl = getBasePath(currentScript.src);
-        const uniqueClass = `mw-${clientId}-${Date.now()}`;
+        const uniqueClass = `bhw-maps-${clientId}-${Date.now()}`;
         const container = createContainer(currentScript, clientId, uniqueClass);
         
         showLoading(container);
@@ -306,20 +306,20 @@
             loadConfig(clientId, baseUrl)
         ]).then(([, fetchedConfig]) => {
             const finalConfig = mergeDeep(getDefaultConfig(), fetchedConfig);
-            console.log(`[MapsWidget] 📋 Финальный конфиг для "${clientId}":`, finalConfig);
+            console.log(`[BusinessHoursMapsWidget] 📋 Финальный конфиг для "${clientId}":`, finalConfig);
             
             applyCustomStyles(uniqueClass, finalConfig.style);
             createMapsWidget(container, finalConfig, uniqueClass);
-            console.log(`[MapsWidget] ✅ Виджет "${clientId}" успешно создан`);
+            console.log(`[BusinessHoursMapsWidget] ✅ Виджет "${clientId}" успешно создан`);
         }).catch(error => {
-            console.warn(`[MapsWidget] ⚠️ Ошибка загрузки "${clientId}":`, error.message);
+            console.warn(`[BusinessHoursMapsWidget] ⚠️ Ошибка загрузки "${clientId}":`, error.message);
             const defaultConfig = getDefaultConfig();
             applyCustomStyles(uniqueClass, defaultConfig.style);
             createMapsWidget(container, defaultConfig, uniqueClass);
         });
 
     } catch (error) {
-        console.error('[MapsWidget] 💥 Критическая ошибка:', error);
+        console.error('[BusinessHoursMapsWidget] 💥 Критическая ошибка:', error);
     }
 
     function normalizeId(id) {
@@ -338,24 +338,23 @@
 
     function createContainer(scriptElement, clientId, uniqueClass) {
         const container = document.createElement('div');
-        container.id = `maps-widget-${clientId}`;
-        container.className = `mw-container ${uniqueClass}`;
+        container.id = `business-hours-maps-widget-${clientId}`;
+        container.className = `bhw-container ${uniqueClass}`;
         scriptElement.parentNode.insertBefore(container, scriptElement.nextSibling);
         return container;
     }
 
     function showLoading(container) {
         container.innerHTML = `
-            <div class="mw-widget">
-                <div class="mw-loading">
-                    <div class="mw-spinner"></div>
+            <div class="bhw-widget">
+                <div class="bhw-loading">
+                    <div class="bhw-spinner"></div>
                     <div>Loading map widget...</div>
                 </div>
             </div>
         `;
     }
 
-    // УНИФИЦИРОВАННАЯ СТРУКТУРА (точно как у countdown timer и click-to-call)
     function getDefaultConfig() {
         return {
             title: "Tech Hub Office",
@@ -442,13 +441,13 @@
     async function loadConfig(clientId, baseUrl) {
         // Локальный конфиг для разработки
         if (clientId === 'local') {
-            const localScript = document.querySelector('#mw-local-config');
+            const localScript = document.querySelector('#bhw-maps-local-config');
             if (!localScript) {
-                throw new Error('Локальный конфиг не найден (#mw-local-config)');
+                throw new Error('Локальный конфиг не найден (#bhw-maps-local-config)');
             }
             try {
                 const config = JSON.parse(localScript.textContent);
-                console.log(`[MapsWidget] 📄 Локальный конфиг загружен:`, config);
+                console.log(`[BusinessHoursMapsWidget] 📄 Локальный конфиг загружен:`, config);
                 return config;
             } catch (err) {
                 throw new Error('Ошибка парсинга локального JSON: ' + err.message);
@@ -457,7 +456,7 @@
 
         // Загрузка с сервера
         const configUrl = `${baseUrl}configs/${encodeURIComponent(clientId)}.json?v=${Date.now()}`;
-        console.log(`[MapsWidget] 🌐 Загружаем конфиг: ${configUrl}`);
+        console.log(`[BusinessHoursMapsWidget] 🌐 Загружаем конфиг: ${configUrl}`);
         
         const response = await fetch(configUrl, { 
             cache: 'no-store',
@@ -469,12 +468,12 @@
         }
         
         const config = await response.json();
-        console.log(`[MapsWidget] ✅ Серверный конфиг загружен:`, config);
+        console.log(`[BusinessHoursMapsWidget] ✅ Серверный конфиг загружен:`, config);
         return config;
     }
 
     function applyCustomStyles(uniqueClass, style) {
-        const styleId = `mw-style-${uniqueClass}`;
+        const styleId = `bhw-maps-style-${uniqueClass}`;
         let styleElement = document.getElementById(styleId);
         
         if (!styleElement) {
@@ -486,9 +485,8 @@
         styleElement.textContent = generateUniqueStyles(uniqueClass, style);
     }
 
-    // УНИФИЦИРОВАННЫЕ CSS-ПЕРЕМЕННЫЕ (как у countdown timer)
     function generateUniqueStyles(uniqueClass, style) {
-        const s = style;
+        const s = style || {};
         const colors = s.colors || {};
         const sizes = s.sizes || {};
         const borderRadius = s.borderRadius || {};
@@ -497,44 +495,44 @@
 
         return `
             .${uniqueClass} {
-                --mw-font: ${s.fontFamily || "'Inter', system-ui, sans-serif"};
-                --mw-value-font: ${s.valueFontFamily || "'Inter', system-ui, sans-serif"};
-                --mw-max-width: ${Math.round(520 * fs)}px;
-                --mw-bg: ${colors.background || "#ffffff"};
-                --mw-widget-radius: ${borderRadius.widget || 16}px;
-                --mw-padding: ${sizes.padding || 24}px;
-                --mw-padding-mobile: ${Math.round((sizes.padding || 24) * 0.8)}px;
-                --mw-text-color: ${colors.text || "white"};
-                --mw-header-bg: ${colors.headerBackground || "linear-gradient(135deg, #667eea 0%, #764ba2 100%)"};
-                --mw-shadow: ${shadow.widget || "0 20px 60px rgba(0,0,0,0.15)"};
-                --mw-shadow-hover: ${shadow.widgetHover || "0 30px 80px rgba(0,0,0,0.20)"};
-                --mw-text-shadow: ${shadow.text || "0 2px 8px rgba(0,0,0,0.3)"};
-                --mw-icon-size: ${sizes.iconSize || 48}px;
-                --mw-icon-font-size: ${Math.round((sizes.iconSize || 48) * 0.42)}px;
-                --mw-title-size: ${1.35 * fs}em;
-                --mw-title-size-mobile: ${1.2 * fs}em;
-                --mw-subtitle-size: ${0.9 * fs}em;
-                --mw-block-bg: ${colors.blockBackground || "rgba(255,255,255,0.22)"};
-                --mw-block-border: 1px solid ${colors.blockBorder || "rgba(255,255,255,0.35)"};
-                --mw-block-radius: ${borderRadius.blocks || 12}px;
-                --mw-map-height: ${sizes.mapHeight || 300}px;
-                --mw-gap: ${sizes.gap || 16}px;
-                --mw-actions-gap: ${sizes.actionsGap || 10}px;
-                --mw-actions-gap-mobile: ${Math.round((sizes.actionsGap || 10) * 0.8)}px;
-                --mw-actions-padding: ${sizes.actionsPadding || 18}px;
-                --mw-btn-padding: ${sizes.blockPadding || 14}px 18px;
-                --mw-btn-radius: ${borderRadius.blocks || 11}px;
-                --mw-btn-size: ${0.9 * fs}em;
-                --mw-btn-weight: 700;
-                --mw-btn-primary: ${colors.btnPrimary || "#4285f4"};
-                --mw-btn-secondary: ${colors.btnSecondary || "#34a853"};
-                --mw-btn-tertiary: ${colors.btnTertiary || "#6366f1"};
-                --mw-btn-shadow-hover: ${shadow.btnHover || "0 8px 24px rgba(0,0,0,0.18)"};
-                --mw-details-padding: ${sizes.detailsPadding || 22}px;
-                --mw-details-padding-mobile: ${Math.round((sizes.detailsPadding || 22) * 0.8)}px;
-                --mw-detail-size: ${0.9 * fs}em;
-                --mw-detail-label-color: ${colors.detailLabel || "#666"};
-                --mw-detail-value-color: ${colors.detailText || "#333333"};
+                --bhw-font: ${s.fontFamily || "'Inter', system-ui, sans-serif"};
+                --bhw-value-font: ${s.valueFontFamily || "'Inter', system-ui, sans-serif"};
+                --bhw-max-width: ${Math.round(520 * fs)}px;
+                --bhw-bg: ${colors.background || "#ffffff"};
+                --bhw-widget-radius: ${borderRadius.widget || 16}px;
+                --bhw-padding: ${sizes.padding || 24}px;
+                --bhw-padding-mobile: ${Math.round((sizes.padding || 24) * 0.8)}px;
+                --bhw-text-color: ${colors.text || "white"};
+                --bhw-header-bg: ${colors.headerBackground || "linear-gradient(135deg, #667eea 0%, #764ba2 100%)"};
+                --bhw-shadow: ${shadow.widget || "0 20px 60px rgba(0,0,0,0.15)"};
+                --bhw-shadow-hover: ${shadow.widgetHover || "0 30px 80px rgba(0,0,0,0.20)"};
+                --bhw-text-shadow: ${shadow.text || "0 2px 8px rgba(0,0,0,0.3)"};
+                --bhw-icon-size: ${sizes.iconSize || 48}px;
+                --bhw-icon-font-size: ${Math.round((sizes.iconSize || 48) * 0.42)}px;
+                --bhw-title-size: ${1.35 * fs}em;
+                --bhw-title-size-mobile: ${1.2 * fs}em;
+                --bhw-subtitle-size: ${0.9 * fs}em;
+                --bhw-block-bg: ${colors.blockBackground || "rgba(255,255,255,0.22)"};
+                --bhw-block-border: 1px solid ${colors.blockBorder || "rgba(255,255,255,0.35)"};
+                --bhw-block-radius: ${borderRadius.blocks || 12}px;
+                --bhw-map-height: ${sizes.mapHeight || 300}px;
+                --bhw-gap: ${sizes.gap || 16}px;
+                --bhw-actions-gap: ${sizes.actionsGap || 10}px;
+                --bhw-actions-gap-mobile: ${Math.round((sizes.actionsGap || 10) * 0.8)}px;
+                --bhw-actions-padding: ${sizes.actionsPadding || 18}px;
+                --bhw-btn-padding: ${sizes.blockPadding || 14}px 18px;
+                --bhw-btn-radius: ${borderRadius.blocks || 11}px;
+                --bhw-btn-size: ${0.9 * fs}em;
+                --bhw-btn-weight: 700;
+                --bhw-btn-primary: ${colors.btnPrimary || "#4285f4"};
+                --bhw-btn-secondary: ${colors.btnSecondary || "#34a853"};
+                --bhw-btn-tertiary: ${colors.btnTertiary || "#6366f1"};
+                --bhw-btn-shadow-hover: ${shadow.btnHover || "0 8px 24px rgba(0,0,0,0.18)"};
+                --bhw-details-padding: ${sizes.detailsPadding || 22}px;
+                --bhw-details-padding-mobile: ${Math.round((sizes.detailsPadding || 22) * 0.8)}px;
+                --bhw-detail-size: ${0.9 * fs}em;
+                --bhw-detail-label-color: ${colors.detailLabel || "#666"};
+                --bhw-detail-value-color: ${colors.detailText || "#333333"};
             }
         `;
     }
@@ -546,36 +544,36 @@
         const iconHtml = renderIcon(config);
 
         container.innerHTML = `
-            <div class="mw-widget">
-                <div class="mw-header">
-                    <div class="mw-icon">${iconHtml}</div>
-                    <div class="mw-info">
-                        <h3 class="mw-title">${escapeHtml(config.title)}</h3>
-                        <p class="mw-address">${escapeHtml(config.address)}</p>
+            <div class="bhw-widget">
+                <div class="bhw-header">
+                    <div class="bhw-icon">${iconHtml}</div>
+                    <div class="bhw-info">
+                        <h3 class="bhw-title">${escapeHtml(config.title)}</h3>
+                        <p class="bhw-address">${escapeHtml(config.address)}</p>
                     </div>
                 </div>
                 
-                <div class="mw-map-container">
-                    <div id="${mapId}" class="mw-map"></div>
-                    <div class="mw-error" style="display: none;">
-                        <div class="mw-error-icon">⚠️</div>
+                <div class="bhw-map-container">
+                    <div id="${mapId}" class="bhw-map"></div>
+                    <div class="bhw-error" style="display: none;">
+                        <div class="bhw-error-icon">⚠️</div>
                         <p>Map temporarily unavailable</p>
                     </div>
                 </div>
                 
-                <div class="mw-actions">
+                <div class="bhw-actions">
                     ${config.showDirections ? `
                         <a href="${getDirectionsUrl(config.coordinates, config.address)}" 
                            target="_blank" 
                            rel="noopener noreferrer" 
-                           class="mw-btn mw-btn-directions">
+                           class="bhw-btn bhw-btn-directions">
                           🚗 Directions
                         </a>
                     ` : ''}
                     
                     ${config.showCall && config.phone ? `
                         <a href="tel:${config.phone.replace(/[^\d+]/g, '')}" 
-                           class="mw-btn mw-btn-call">
+                           class="bhw-btn bhw-btn-call">
                           📞 Call
                         </a>
                     ` : ''}
@@ -584,13 +582,13 @@
                         <a href="${escapeAttr(config.website)}" 
                            target="_blank" 
                            rel="noopener noreferrer" 
-                           class="mw-btn mw-btn-website">
+                           class="bhw-btn bhw-btn-website">
                           🌐 Website
                         </a>
                     ` : ''}
                 </div>
                 
-                <div class="mw-details">
+                <div class="bhw-details">
                     ${config.phone ? detailRow('Phone:', config.phone) : ''}
                     ${config.email ? detailRow('Email:', config.email) : ''}
                     ${config.businessHours ? detailRow('Business Hours:', config.businessHours) : ''}
@@ -605,14 +603,13 @@
 
     function detailRow(label, value) {
         return `
-            <div class="mw-detail">
-                <span class="mw-detail-label">${escapeHtml(label)}</span>
-                <span class="mw-detail-value">${escapeHtml(value)}</span>
+            <div class="bhw-detail">
+                <span class="bhw-detail-label">${escapeHtml(label)}</span>
+                <span class="bhw-detail-value">${escapeHtml(value)}</span>
             </div>
         `;
     }
 
-    // БЕЗОПАСНОЕ ОТОБРАЖЕНИЕ ИКОНОК (как в click-to-call)
     function renderIcon(config) {
         // Приоритет: iconHtml > icon > дефолт
         if (config.iconHtml && config.iconHtml.trim()) {
@@ -646,13 +643,11 @@
                 scrollWheelZoom: false
             });
 
-            // Добавляем красивые тайлы
             L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
                 attribution: '© OpenStreetMap contributors',
                 maxZoom: 19
             }).addTo(map);
 
-            // Создаем кастомную иконку
             const iconHtml = renderIcon(config);
             const customIcon = L.divIcon({
                 html: `
@@ -672,7 +667,7 @@
                         ">${iconHtml}</div>
                     </div>
                 `,
-                className: 'custom-map-marker',
+                className: 'bhw-custom-map-marker',
                 iconSize: [40, 40],
                 iconAnchor: [20, 35]
             });
@@ -703,7 +698,7 @@
 
     function showMapError(mapId) {
         const mapEl = document.getElementById(mapId);
-        const errorEl = mapEl?.parentNode?.querySelector('.mw-error');
+        const errorEl = mapEl?.parentNode?.querySelector('.bhw-error');
         if (mapEl && errorEl) {
             mapEl.style.display = 'none';
             errorEl.style.display = 'flex';
