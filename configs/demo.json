@@ -1,58 +1,28 @@
 {
-  "title": "Tech Hub Office",
-  "address": "Staroměstské náměstí 1, Prague, Czechia",
-  "coordinates": {
-    "lat": 50.0875,
-    "lng": 14.4213
-  },
-  "zoom": 15,
-  "phone": "+420 123 456 789",
-  "email": "info@techhub.cz",
-  "website": "https://techhub.cz",
-  "businessHours": "Mon-Fri 9:00-18:00",
-  "parking": "Free for clients",
-  "showDirections": true,
-  "showCall": true,
-  "showWebsite": false,
-  "icon": "",
-  "iconHtml": "&#127970;",
-  "style": {
-    "fontFamily": "'Inter', system-ui, sans-serif",
-    "valueFontFamily": "'Inter', system-ui, sans-serif",
-    "colors": {
-      "background": "#ffffff",
-      "text": "white",
-      "headerBackground": "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
-      "blockBackground": "rgba(255,255,255,0.22)",
-      "blockBorder": "rgba(255,255,255,0.35)",
-      "blockHover": "rgba(255,255,255,0.30)",
-      "borderHover": "rgba(255,255,255,0.55)",
-      "btnPrimary": "#4285f4",
-      "btnSecondary": "#34a853",
-      "btnTertiary": "#6366f1",
-      "detailText": "#333333",
-      "detailLabel": "#666"
+    "businessName": "Tech Hub Office",
+    "address": "Staroměstské náměstí 1, Prague, Czechia",
+    "coordinates": {
+        "lat": 50.0875,
+        "lng": 14.4213
     },
-    "borderRadius": {
-      "widget": 16,
-      "blocks": 12
-    },
-    "sizes": {
-      "fontSize": 1.0,
-      "padding": 24,
-      "blockPadding": 14,
-      "gap": 16,
-      "mapHeight": 300,
-      "iconSize": 48,
-      "actionsGap": 10,
-      "actionsPadding": 18,
-      "detailsPadding": 22
-    },
-    "shadow": {
-      "widget": "0 20px 60px rgba(102,126,234,0.15)",
-      "widgetHover": "0 30px 80px rgba(102,126,234,0.20)",
-      "text": "0 2px 8px rgba(0,0,0,0.3)",
-      "btnHover": "0 8px 24px rgba(0,0,0,0.18)"
+    "zoom": 15,
+    "phone": "+420 123 456 789",
+    "email": "info@techhub.cz",
+    "website": "https://techhub.cz",
+    "businessHours": "Mon-Fri 9:00-18:00",
+    "parking": "Free for clients",
+    "showDirections": true,
+    "showCall": true,
+    "showWebsite": false,
+    "iconHtml": "&#127970;",
+    "styling": {
+        "primaryColor": "#667eea",
+        "secondaryColor": "#764ba2",
+        "widgetBackground": "#ffffff",
+        "fontFamily": "'Inter', system-ui, sans-serif",
+        "businessNameSize": "1.35em",
+        "directionsColor": "#4285f4",
+        "callColor": "#34a853",
+        "websiteColor": "#6366f1"
     }
-  }
 }
