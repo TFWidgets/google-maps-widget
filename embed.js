@@ -1,56 +1,55 @@
 (function() {
     'use strict';
 
-    // Базовые CSS стили с унифицированными CSS-переменными
+    // Базовые CSS стили с CSS-переменными для полной кастомизации
     const inlineCSS = `
         .bhw-container {
-            font-family: var(--bhw-font, 'Inter', system-ui, sans-serif);
+            font-family: var(--bhw-font, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif);
             max-width: var(--bhw-max-width, 520px);
             margin: var(--bhw-margin, 20px auto);
-            width: 100%;
         }
         
         .bhw-widget {
             background: var(--bhw-bg, #ffffff);
-            border-radius: var(--bhw-widget-radius, 16px);
-            overflow: hidden;
-            box-shadow: var(--bhw-shadow, 0 20px 60px rgba(0,0,0,0.15));
-            position: relative;
-        }
-        
-        .bhw-header {
-            background: var(--bhw-header-bg, linear-gradient(135deg, #667eea 0%, #764ba2 100%));
-            padding: var(--bhw-padding, 24px);
+            border-radius: var(--bhw-radius, 20px);
+            padding: var(--bhw-padding, 0);
             color: var(--bhw-text-color, white);
-            display: flex;
-            align-items: center;
-            gap: var(--bhw-gap, 16px);
+            box-shadow: var(--bhw-shadow, 0 20px 60px rgba(102, 126, 234, 0.4));
             position: relative;
             overflow: hidden;
         }
         
-        .bhw-header::before {
+        .bhw-widget::before {
             content: '';
             position: absolute;
             inset: 0;
-            background: var(--bhw-overlay, 
-                radial-gradient(circle at 25% 25%, rgba(255, 255, 255, 0.15) 0%, transparent 50%),
-                radial-gradient(circle at 75% 75%, rgba(255, 255, 255, 0.1) 0%, transparent 50%)
-            );
+            background: var(--bhw-overlay, radial-gradient(circle at 30% 20%, rgba(255,255,255,0.15) 0%, transparent 50%));
             pointer-events: none;
         }
         
-        .bhw-icon {
-            width: var(--bhw-icon-size, 48px);
-            height: var(--bhw-icon-size, 48px);
-            background: var(--bhw-block-bg, rgba(255,255,255,0.22));
-            border-radius: var(--bhw-block-radius, 12px);
+        .bhw-header {
+            text-align: var(--bhw-header-align, left);
+            margin-bottom: var(--bhw-header-margin-bottom, 0);
+            position: relative;
+            z-index: 1;
+            background: var(--bhw-header-bg, linear-gradient(135deg, #667eea 0%, #764ba2 100%));
+            padding: var(--bhw-header-padding, 24px);
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+        
+        .bhw-timezone-info {
+            width: var(--bhw-tz-size, 48px);
+            height: var(--bhw-tz-size, 48px);
+            background: var(--bhw-open-color, rgba(255,255,255,0.22));
+            border-radius: var(--bhw-badge-radius, 12px);
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: var(--bhw-icon-font-size, 20px);
+            font-size: var(--bhw-tz-opacity, 20px);
             backdrop-filter: blur(12px);
-            border: var(--bhw-block-border, 1px solid rgba(255,255,255,0.35));
+            border: 1px solid rgba(255,255,255,0.35);
             position: relative;
             z-index: 1;
         }
@@ -61,22 +60,22 @@
             z-index: 1;
         }
         
-        .bhw-title {
-            margin: 0 0 6px 0;
-            font-size: var(--bhw-title-size, 1.35em);
-            font-weight: var(--bhw-title-weight, 700);
-            text-shadow: var(--bhw-text-shadow, 0 2px 8px rgba(0,0,0,0.3));
-            letter-spacing: var(--bhw-title-spacing, 0.2px);
-            color: var(--bhw-title-color, inherit);
+        .bhw-business-name {
+            font-size: var(--bhw-name-size, 1.35em);
+            font-weight: var(--bhw-name-weight, 700);
+            margin-bottom: var(--bhw-name-margin-bottom, 6px);
+            text-shadow: var(--bhw-name-shadow, 0 2px 8px rgba(0,0,0,0.3));
+            color: var(--bhw-name-color, inherit);
+            margin-top: 0;
         }
         
-        .bhw-address {
+        .bhw-status-badge {
             margin: 0;
-            opacity: var(--bhw-subtitle-opacity, 0.92);
-            font-size: var(--bhw-subtitle-size, 0.9em);
+            opacity: var(--bhw-badge-opacity, 0.92);
+            font-size: var(--bhw-badge-size, 0.9em);
             line-height: 1.35;
-            font-weight: var(--bhw-subtitle-weight, 500);
-            color: var(--bhw-subtitle-color, inherit);
+            font-weight: var(--bhw-badge-weight, 500);
+            color: inherit;
         }
         
         .bhw-map-container {
@@ -91,49 +90,37 @@
             z-index: 1;
         }
         
-        .bhw-error {
-            position: absolute;
-            inset: 0;
+        .bhw-closing-info {
+            background: var(--bhw-info-bg, #f8f9fa);
+            padding: var(--bhw-info-padding, 18px);
+            border-radius: var(--bhw-info-radius, 0);
+            text-align: center;
+            font-weight: var(--bhw-info-weight, 600);
+            margin-bottom: var(--bhw-info-margin-bottom, 0);
+            color: var(--bhw-info-color, inherit);
+            position: relative;
+            z-index: 1;
             display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            background: #f8f9fa;
-            color: #666;
-            z-index: 2;
+            gap: 10px;
         }
         
-        .bhw-error-icon {
-            font-size: 36px;
-            margin-bottom: 12px;
-            opacity: 0.7;
-        }
-        
-        .bhw-actions {
-            display: flex;
-            gap: var(--bhw-actions-gap, 10px);
-            padding: var(--bhw-actions-padding, 18px);
-            background: #f8f9fa;
-        }
-        
-        .bhw-btn {
+        .bhw-hours-time {
             flex: 1;
-            padding: var(--bhw-btn-padding, 14px 18px);
-            border-radius: var(--bhw-btn-radius, 11px);
+            padding: var(--bhw-time-padding, 14px 18px);
+            border-radius: var(--bhw-time-radius, 11px);
             text-decoration: none;
-            font-weight: var(--bhw-btn-weight, 700);
-            font-size: var(--bhw-btn-size, 0.9em);
+            font-weight: var(--bhw-time-weight, 700);
+            font-size: var(--bhw-time-size, 0.9em);
             text-align: center;
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             border: none;
             cursor: pointer;
             position: relative;
             overflow: hidden;
-            font-family: var(--bhw-value-font, inherit);
             color: white;
         }
         
-        .bhw-btn::before {
+        .bhw-hours-time::before {
             content: '';
             position: absolute;
             inset: 0;
@@ -141,65 +128,93 @@
             pointer-events: none;
         }
         
-        .bhw-btn-directions {
-            background: var(--bhw-btn-primary, #4285f4);
+        .bhw-hours-time.directions {
+            background: var(--bhw-open-color, #4285f4);
         }
         
-        .bhw-btn-call {
-            background: var(--bhw-btn-secondary, #34a853);
+        .bhw-hours-time.call {
+            background: var(--bhw-closed-color, #34a853);
         }
         
-        .bhw-btn-website {
-            background: var(--bhw-btn-tertiary, #6366f1);
+        .bhw-hours-time.website {
+            background: var(--bhw-tertiary-color, #6366f1);
         }
         
-        .bhw-btn:hover {
+        .bhw-hours-time:hover {
             transform: translateY(-2px);
-            box-shadow: var(--bhw-btn-shadow-hover, 0 8px 24px rgba(0,0,0,0.18));
+            box-shadow: var(--bhw-time-shadow, 0 8px 24px rgba(0,0,0,0.18));
         }
         
-        .bhw-details {
-            padding: var(--bhw-details-padding, 22px);
+        .bhw-hours-table {
+            background: var(--bhw-table-bg, #ffffff);
+            border-radius: var(--bhw-table-radius, 0);
+            padding: var(--bhw-table-padding, 22px);
+            color: var(--bhw-table-text, #333);
+            margin: var(--bhw-table-margin, 0);
+            position: relative;
+            z-index: 1;
         }
         
-        .bhw-detail {
+        .bhw-hours-row {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 10px 0;
-            border-bottom: 1px solid #f0f0f0;
-            font-size: var(--bhw-detail-size, 0.9em);
+            padding: var(--bhw-row-padding, 10px 0);
+            border-bottom: var(--bhw-row-border, 1px solid #f0f0f0);
+            font-size: var(--bhw-day-size, 0.9em);
         }
         
-        .bhw-detail:last-child {
+        .bhw-hours-row:last-child {
             border-bottom: none;
         }
         
-        .bhw-detail-label {
-            font-weight: var(--bhw-detail-label-weight, 600);
-            color: var(--bhw-detail-label-color, #666);
+        .bhw-day-name {
+            font-weight: var(--bhw-day-weight, 600);
+            color: var(--bhw-day-color, #666);
         }
         
-        .bhw-detail-value {
-            color: var(--bhw-detail-value-color, #333333);
+        .bhw-hours-time.detail-value {
+            color: var(--bhw-time-color, #333333);
             text-align: right;
-            font-weight: var(--bhw-detail-value-weight, 500);
+            font-weight: var(--bhw-time-weight, 500);
+            background: none;
+            padding: 0;
+            border-radius: 0;
+            transform: none;
+            box-shadow: none;
+            cursor: default;
+        }
+        
+        .bhw-hours-time.detail-value:hover {
+            transform: none;
+            box-shadow: none;
         }
         
         .bhw-loading {
             text-align: center;
             padding: var(--bhw-loading-padding, 40px);
-            color: var(--bhw-loading-color, #666);
+            position: relative;
+            z-index: 1;
+            color: var(--bhw-loading-text-color, white);
         }
         
         .bhw-spinner {
             width: 40px;
             height: 40px;
-            border: 3px solid rgba(0,0,0,0.1);
-            border-top: 3px solid #4285f4;
+            border: var(--bhw-spinner-border, 3px solid rgba(255,255,255,0.3));
+            border-top: var(--bhw-spinner-top-border, 3px solid white);
             border-radius: 50%;
             animation: bhw-spin 1s linear infinite;
-            margin: 0 auto 15px;
+            margin: var(--bhw-spinner-margin, 0 auto 15px);
+        }
+        
+        .bhw-error {
+            background: var(--bhw-error-bg, linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%));
+            padding: var(--bhw-error-padding, 30px);
+            border-radius: var(--bhw-error-radius, 16px);
+            color: var(--bhw-error-text, white);
+            text-align: center;
+            box-shadow: var(--bhw-error-shadow, 0 15px 40px rgba(255,107,107,0.4));
         }
         
         @keyframes bhw-spin {
@@ -208,22 +223,21 @@
         }
         
         @media (max-width: 480px) {
-            .bhw-container {
-                max-width: calc(100vw - 32px);
-                margin: var(--bhw-margin-mobile, 16px auto);
+            .bhw-widget {
+                padding: var(--bhw-padding-mobile, 0);
             }
             .bhw-header {
-                padding: var(--bhw-padding-mobile, 20px);
+                padding: var(--bhw-header-padding-mobile, 20px);
             }
-            .bhw-title {
-                font-size: var(--bhw-title-size-mobile, 1.2em);
+            .bhw-hours-table {
+                padding: var(--bhw-table-padding-mobile, 18px);
             }
-            .bhw-actions {
+            .bhw-business-name {
+                font-size: var(--bhw-name-size-mobile, 1.2em);
+            }
+            .bhw-closing-info {
                 flex-direction: column;
-                gap: var(--bhw-actions-gap-mobile, 8px);
-            }
-            .bhw-details {
-                padding: var(--bhw-details-padding-mobile, 18px);
+                gap: 8px;
             }
         }
     `;
@@ -255,7 +269,7 @@
                     resolve();
                 };
                 script.onerror = () => {
-                    console.error('[BusinessHoursMapsWidget] Failed to load Leaflet');
+                    console.error('[BusinessHoursWidget] Failed to load Leaflet');
                     resolve(); // Resolve anyway, map will show error
                 };
                 document.head.appendChild(script);
@@ -274,71 +288,62 @@
 
         let clientId = currentScript.dataset.id;
         if (!clientId) {
-            console.error('[BusinessHoursMapsWidget] data-id обязателен');
+            console.error('[BusinessHoursWidget] data-id обязателен');
             return;
         }
 
-        clientId = normalizeId(clientId);
+        // Убираем .js расширение
+        if (clientId.endsWith('.js')) {
+            clientId = clientId.slice(0, -3);
+        }
 
-        // Защита от повторного выполнения
+        // Проверяем, не обработан ли уже этот конкретный скрипт
         if (currentScript.dataset.bhwMounted === '1') return;
         currentScript.dataset.bhwMounted = '1';
 
-        console.log(`[BusinessHoursMapsWidget] 🚀 Инициализация виджета "${clientId}"`);
+        console.log(`[BusinessHoursWidget] Normalized clientId: ${clientId}`);
 
-        // Добавляем базовые стили один раз в head с уникальным ID
-        if (!document.querySelector('#business-hours-maps-widget-styles')) {
+        // Добавляем стили один раз
+        if (!document.querySelector('#business-hours-widget-styles')) {
             const style = document.createElement('style');
-            style.id = 'business-hours-maps-widget-styles';
+            style.id = 'business-hours-widget-styles';
             style.textContent = inlineCSS;
             document.head.appendChild(style);
         }
 
-        const baseUrl = getBasePath(currentScript.src);
-        const uniqueClass = `bhw-maps-${clientId}-${Date.now()}`;
+        // Определяем baseUrl
+        const baseUrl = currentScript.src ? 
+            currentScript.src.replace(/\/[^\/]*$/, '') : 
+            './';
+
+        // Создаем контейнер с уникальным классом
+        const uniqueClass = `bhw-${clientId}-${Date.now()}`;
         const container = createContainer(currentScript, clientId, uniqueClass);
         
+        // Показываем загрузку
         showLoading(container);
 
         // Загружаем Leaflet и конфигурацию параллельно
         Promise.all([
             loadLeaflet(),
             loadConfig(clientId, baseUrl)
-        ]).then(([, fetchedConfig]) => {
-            const finalConfig = mergeDeep(getDefaultConfig(), fetchedConfig);
-            console.log(`[BusinessHoursMapsWidget] 📋 Финальный конфиг для "${clientId}":`, finalConfig);
-            
-            applyCustomStyles(uniqueClass, finalConfig.style);
-            createMapsWidget(container, finalConfig, uniqueClass);
-            console.log(`[BusinessHoursMapsWidget] ✅ Виджет "${clientId}" успешно создан`);
-        }).catch(error => {
-            console.warn(`[BusinessHoursMapsWidget] ⚠️ Ошибка загрузки "${clientId}":`, error.message);
-            const defaultConfig = getDefaultConfig();
-            applyCustomStyles(uniqueClass, defaultConfig.style);
-            createMapsWidget(container, defaultConfig, uniqueClass);
+        ]).then(([, config]) => {
+            applyCustomStyles(container, config, uniqueClass);
+            createBusinessHoursWidget(container, config, uniqueClass);
+            console.log(`[BusinessHoursWidget] Виджет ${clientId} успешно создан`);
+        })
+        .catch(error => {
+            console.error('[BusinessHoursWidget] Ошибка:', error);
+            showError(container, clientId, error.message);
         });
 
     } catch (error) {
-        console.error('[BusinessHoursMapsWidget] 💥 Критическая ошибка:', error);
-    }
-
-    function normalizeId(id) {
-        return (id || 'demo').replace(/\.(json|js)$/i, '');
-    }
-
-    function getBasePath(src) {
-        if (!src) return './';
-        try {
-            const url = new URL(src, location.href);
-            return url.origin + url.pathname.replace(/\/[^\/]*$/, '/');
-        } catch (error) {
-            return './';
-        }
+        console.error('[BusinessHoursWidget] Критическая ошибка:', error);
     }
 
     function createContainer(scriptElement, clientId, uniqueClass) {
         const container = document.createElement('div');
-        container.id = `business-hours-maps-widget-${clientId}`;
+        container.id = `business-hours-widget-${clientId}`;
         container.className = `bhw-container ${uniqueClass}`;
         scriptElement.parentNode.insertBefore(container, scriptElement.nextSibling);
         return container;
@@ -355,201 +360,108 @@
         `;
     }
 
-    function getDefaultConfig() {
-        return {
-            title: "Tech Hub Office",
-            address: "Staroměstské náměstí 1, Prague, Czechia",
-            coordinates: {
-                lat: 50.0875,
-                lng: 14.4213
-            },
-            zoom: 15,
-            phone: "+420 123 456 789",
-            email: "info@techhub.cz",
-            website: "https://techhub.cz",
-            businessHours: "Mon-Fri 9:00-18:00",
-            parking: "Free for clients",
-            showDirections: true,
-            showCall: true,
-            showWebsite: false,
-            icon: "",
-            iconHtml: "&#127970;", // 🏢 как HTML entity
-            style: {
-                fontFamily: "'Inter', system-ui, sans-serif",
-                valueFontFamily: "'Inter', system-ui, sans-serif",
-                colors: {
-                    background: "#ffffff",
-                    text: "white",
-                    headerBackground: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
-                    blockBackground: "rgba(255,255,255,0.22)",
-                    blockBorder: "rgba(255,255,255,0.35)",
-                    blockHover: "rgba(255,255,255,0.30)",
-                    borderHover: "rgba(255,255,255,0.55)",
-                    btnPrimary: "#4285f4",
-                    btnSecondary: "#34a853",
-                    btnTertiary: "#6366f1",
-                    detailText: "#333333",
-                    detailLabel: "#666"
-                },
-                borderRadius: {
-                    widget: 16,
-                    blocks: 12
-                },
-                sizes: {
-                    fontSize: 1.0,
-                    padding: 24,
-                    blockPadding: 14,
-                    gap: 10,
-                    mapHeight: 300,
-                    iconSize: 48,
-                    actionsGap: 10,
-                    actionsPadding: 18,
-                    detailsPadding: 22
-                },
-                shadow: {
-                    widget: "0 20px 60px rgba(0,0,0,0.15)",
-                    widgetHover: "0 30px 80px rgba(0,0,0,0.20)",
-                    text: "0 2px 8px rgba(0,0,0,0.3)",
-                    btnHover: "0 8px 24px rgba(0,0,0,0.18)"
-                }
-            }
-        };
-    }
-
-    function mergeDeep(base, override) {
-        const result = { ...base, ...override };
-
-        // Сливаем объекты первого уровня
-        for (const key of ['style', 'coordinates']) {
-            if (base[key] && typeof base[key] === 'object' && !Array.isArray(base[key])) {
-                result[key] = { ...(base[key] || {}), ...(override[key] || {}) };
-            }
-        }
-
-        // Сливаем объекты второго уровня в style (как у countdown timer)
-        if (result.style) {
-            for (const subKey of ['colors', 'borderRadius', 'sizes', 'shadow']) {
-                if (base.style[subKey] && typeof base.style[subKey] === 'object' && !Array.isArray(base.style[subKey])) {
-                    result.style[subKey] = { ...(base.style[subKey] || {}), ...(override.style?.[subKey] || {}) };
-                }
-            }
-        }
-        
-        return result;
-    }
-
+    // Загрузка конфигурации - унифицирована с Business Hours Widget
     async function loadConfig(clientId, baseUrl) {
-        // Локальный конфиг для разработки
         if (clientId === 'local') {
-            const localScript = document.querySelector('#bhw-maps-local-config');
+            const localScript = document.querySelector('#bhw-local-config');
             if (!localScript) {
-                throw new Error('Локальный конфиг не найден (#bhw-maps-local-config)');
+                throw new Error('Локальный конфиг не найден на странице (#bhw-local-config)');
             }
             try {
-                const config = JSON.parse(localScript.textContent);
-                console.log(`[BusinessHoursMapsWidget] 📄 Локальный конфиг загружен:`, config);
-                return config;
+                return JSON.parse(localScript.textContent);
             } catch (err) {
-                throw new Error('Ошибка парсинга локального JSON: ' + err.message);
+                throw new Error('Ошибка парсинга локального конфига: ' + err.message);
+            }
+        } else {
+            const configUrl = `${baseUrl}/configs/${encodeURIComponent(clientId)}.json?v=${Date.now()}`;
+            try {
+                const response = await fetch(configUrl, { cache: 'no-cache', headers: { 'Accept': 'application/json' } });
+                if (!response.ok) throw new Error(`HTTP ${response.status}`);
+                return await response.json();
+            } catch (error) {
+                console.warn(`[BusinessHoursWidget] Основной конфиг недоступен, используем demo: ${error.message}`);
+                const demoResponse = await fetch(`${baseUrl}/configs/demo.json?v=${Date.now()}`, {
+                    cache: 'no-cache',
+                    headers: { 'Accept': 'application/json' }
+                });
+                if (!demoResponse.ok) throw new Error('Конфигурация недоступна');
+                return await demoResponse.json();
             }
         }
-
-        // Загрузка с сервера
-        const configUrl = `${baseUrl}configs/${encodeURIComponent(clientId)}.json?v=${Date.now()}`;
-        console.log(`[BusinessHoursMapsWidget] 🌐 Загружаем конфиг: ${configUrl}`);
-        
-        const response = await fetch(configUrl, { 
-            cache: 'no-store',
-            headers: { 'Accept': 'application/json' }
-        });
-        
-        if (!response.ok) {
-            throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-        }
-        
-        const config = await response.json();
-        console.log(`[BusinessHoursMapsWidget] ✅ Серверный конфиг загружен:`, config);
-        return config;
     }
 
-    function applyCustomStyles(uniqueClass, style) {
-        const styleId = `bhw-maps-style-${uniqueClass}`;
-        let styleElement = document.getElementById(styleId);
+    // Применение кастомных стилей с уникальным классом - унифицировано
+    function applyCustomStyles(container, config, uniqueClass) {
+        const s = config.styling || {};
         
-        if (!styleElement) {
-            styleElement = document.createElement('style');
-            styleElement.id = styleId;
-            document.head.appendChild(styleElement);
-        }
-        
-        styleElement.textContent = generateUniqueStyles(uniqueClass, style);
+        // Создаем уникальные стили для этого виджета
+        const styleElement = document.createElement('style');
+        styleElement.textContent = generateUniqueStyles(uniqueClass, s);
+        container.appendChild(styleElement);
     }
 
-    function generateUniqueStyles(uniqueClass, style) {
-        const s = style || {};
-        const colors = s.colors || {};
-        const sizes = s.sizes || {};
-        const borderRadius = s.borderRadius || {};
-        const shadow = s.shadow || {};
-        const fs = sizes.fontSize || 1;
+    function generateUniqueStyles(uniqueClass, styling) {
+        const s = styling;
+        const background = s.primaryColor && s.secondaryColor ? 
+            `linear-gradient(135deg, ${s.primaryColor} 0%, ${s.secondaryColor} 100%)` : 
+            (s.backgroundColor || 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)');
 
         return `
             .${uniqueClass} {
-                --bhw-font: ${s.fontFamily || "'Inter', system-ui, sans-serif"};
-                --bhw-value-font: ${s.valueFontFamily || "'Inter', system-ui, sans-serif"};
-                --bhw-max-width: ${Math.round(520 * fs)}px;
-                --bhw-bg: ${colors.background || "#ffffff"};
-                --bhw-widget-radius: ${borderRadius.widget || 16}px;
-                --bhw-padding: ${sizes.padding || 24}px;
-                --bhw-padding-mobile: ${Math.round((sizes.padding || 24) * 0.8)}px;
-                --bhw-text-color: ${colors.text || "white"};
-                --bhw-header-bg: ${colors.headerBackground || "linear-gradient(135deg, #667eea 0%, #764ba2 100%)"};
-                --bhw-shadow: ${shadow.widget || "0 20px 60px rgba(0,0,0,0.15)"};
-                --bhw-shadow-hover: ${shadow.widgetHover || "0 30px 80px rgba(0,0,0,0.20)"};
-                --bhw-text-shadow: ${shadow.text || "0 2px 8px rgba(0,0,0,0.3)"};
-                --bhw-icon-size: ${sizes.iconSize || 48}px;
-                --bhw-icon-font-size: ${Math.round((sizes.iconSize || 48) * 0.42)}px;
-                --bhw-title-size: ${1.35 * fs}em;
-                --bhw-title-size-mobile: ${1.2 * fs}em;
-                --bhw-subtitle-size: ${0.9 * fs}em;
-                --bhw-block-bg: ${colors.blockBackground || "rgba(255,255,255,0.22)"};
-                --bhw-block-border: 1px solid ${colors.blockBorder || "rgba(255,255,255,0.35)"};
-                --bhw-block-radius: ${borderRadius.blocks || 12}px;
-                --bhw-map-height: ${sizes.mapHeight || 300}px;
-                --bhw-gap: ${sizes.gap || 16}px;
-                --bhw-actions-gap: ${sizes.actionsGap || 10}px;
-                --bhw-actions-gap-mobile: ${Math.round((sizes.actionsGap || 10) * 0.8)}px;
-                --bhw-actions-padding: ${sizes.actionsPadding || 18}px;
-                --bhw-btn-padding: ${sizes.blockPadding || 14}px 18px;
-                --bhw-btn-radius: ${borderRadius.blocks || 11}px;
-                --bhw-btn-size: ${0.9 * fs}em;
-                --bhw-btn-weight: 700;
-                --bhw-btn-primary: ${colors.btnPrimary || "#4285f4"};
-                --bhw-btn-secondary: ${colors.btnSecondary || "#34a853"};
-                --bhw-btn-tertiary: ${colors.btnTertiary || "#6366f1"};
-                --bhw-btn-shadow-hover: ${shadow.btnHover || "0 8px 24px rgba(0,0,0,0.18)"};
-                --bhw-details-padding: ${sizes.detailsPadding || 22}px;
-                --bhw-details-padding-mobile: ${Math.round((sizes.detailsPadding || 22) * 0.8)}px;
-                --bhw-detail-size: ${0.9 * fs}em;
-                --bhw-detail-label-color: ${colors.detailLabel || "#666"};
-                --bhw-detail-value-color: ${colors.detailText || "#333333"};
+                font-family: ${s.fontFamily || 'inherit'};
+            }
+            
+            .${uniqueClass} .bhw-widget {
+                background: ${s.widgetBackground || '#ffffff'};
+                border-radius: ${s.borderRadius || '20px'};
+                color: ${s.textColor || 'white'};
+            }
+            
+            .${uniqueClass} .bhw-header {
+                background: ${background};
+                padding: ${s.padding || '24px'};
+            }
+            
+            .${uniqueClass} .bhw-business-name {
+                font-size: ${s.businessNameSize || '1.35em'};
+            }
+            
+            .${uniqueClass} .bhw-hours-time.directions {
+                background: ${s.directionsColor || '#4285f4'};
+            }
+            
+            .${uniqueClass} .bhw-hours-time.call {
+                background: ${s.callColor || '#34a853'};
+            }
+            
+            .${uniqueClass} .bhw-hours-time.website {
+                background: ${s.websiteColor || '#6366f1'};
+            }
+            
+            @media (max-width: 480px) {
+                .${uniqueClass} .bhw-header {
+                    padding: ${s.paddingMobile || '20px'};
+                }
+                .${uniqueClass} .bhw-business-name {
+                    font-size: ${s.nameSizeMobile || '1.2em'};
+                }
             }
         `;
     }
 
-    function createMapsWidget(container, config, uniqueClass) {
+    function createBusinessHoursWidget(container, config, uniqueClass) {
         const mapId = `map-${uniqueClass}`;
 
         // Безопасное отображение иконки
-        const iconHtml = renderIcon(config);
+        const iconHtml = generateTimezoneDisplay(config);
 
         container.innerHTML = `
             <div class="bhw-widget">
                 <div class="bhw-header">
-                    <div class="bhw-icon">${iconHtml}</div>
+                    <div class="bhw-timezone-info">${iconHtml}</div>
                     <div class="bhw-info">
-                        <h3 class="bhw-title">${escapeHtml(config.title)}</h3>
-                        <p class="bhw-address">${escapeHtml(config.address)}</p>
+                        <h2 class="bhw-business-name">${escapeHtml(config.businessName || config.title || 'Map Location')}</h2>
+                        <div class="bhw-status-badge">${escapeHtml(config.address || 'Address not provided')}</div>
                     </div>
                 </div>
                 
@@ -561,19 +473,19 @@
                     </div>
                 </div>
                 
-                <div class="bhw-actions">
+                <div class="bhw-closing-info">
                     ${config.showDirections ? `
                         <a href="${getDirectionsUrl(config.coordinates, config.address)}" 
                            target="_blank" 
                            rel="noopener noreferrer" 
-                           class="bhw-btn bhw-btn-directions">
+                           class="bhw-hours-time directions">
                           🚗 Directions
                         </a>
                     ` : ''}
                     
                     ${config.showCall && config.phone ? `
                         <a href="tel:${config.phone.replace(/[^\d+]/g, '')}" 
-                           class="bhw-btn bhw-btn-call">
+                           class="bhw-hours-time call">
                           📞 Call
                         </a>
                     ` : ''}
@@ -582,42 +494,43 @@
                         <a href="${escapeAttr(config.website)}" 
                            target="_blank" 
                            rel="noopener noreferrer" 
-                           class="bhw-btn bhw-btn-website">
+                           class="bhw-hours-time website">
                           🌐 Website
                         </a>
                     ` : ''}
                 </div>
                 
-                <div class="bhw-details">
-                    ${config.phone ? detailRow('Phone:', config.phone) : ''}
-                    ${config.email ? detailRow('Email:', config.email) : ''}
-                    ${config.businessHours ? detailRow('Business Hours:', config.businessHours) : ''}
-                    ${config.parking ? detailRow('Parking:', config.parking) : ''}
+                <div class="bhw-hours-table">
+                    ${config.phone ? createHoursRow('Phone:', config.phone) : ''}
+                    ${config.email ? createHoursRow('Email:', config.email) : ''}
+                    ${config.businessHours ? createHoursRow('Business Hours:', config.businessHours) : ''}
+                    ${config.parking ? createHoursRow('Parking:', config.parking) : ''}
                 </div>
             </div>
         `;
 
         // Инициализируем карту
         setTimeout(() => initializeMap(mapId, config), 100);
+
+        // Применяем уникальные стили после создания HTML
+        applyCustomStyles(container, config, uniqueClass);
     }
 
-    function detailRow(label, value) {
+    function createHoursRow(label, value) {
         return `
-            <div class="bhw-detail">
-                <span class="bhw-detail-label">${escapeHtml(label)}</span>
-                <span class="bhw-detail-value">${escapeHtml(value)}</span>
+            <div class="bhw-hours-row">
+                <span class="bhw-day-name">${escapeHtml(label)}</span>
+                <span class="bhw-hours-time detail-value">${escapeHtml(value)}</span>
             </div>
         `;
     }
 
-    function renderIcon(config) {
+    function generateTimezoneDisplay(config) {
         // Приоритет: iconHtml > icon > дефолт
         if (config.iconHtml && config.iconHtml.trim()) {
-            // Если это HTML entity или простой HTML - вставляем как есть
             if (config.iconHtml.includes('&') || config.iconHtml.includes('<')) {
                 return config.iconHtml;
             }
-            // Если это эмодзи - экранируем
             return escapeHtml(config.iconHtml);
         }
         
@@ -648,12 +561,12 @@
                 maxZoom: 19
             }).addTo(map);
 
-            const iconHtml = renderIcon(config);
+            const iconHtml = generateTimezoneDisplay(config);
             const customIcon = L.divIcon({
                 html: `
                     <div style="
                         width: 40px; height: 40px;
-                        background: ${config.style?.colors?.btnPrimary || '#4285f4'};
+                        background: ${config.styling?.directionsColor || '#4285f4'};
                         border-radius: 50% 50% 50% 0;
                         transform: rotate(-45deg);
                         display: flex; align-items: center; justify-content: center;
@@ -672,21 +585,18 @@
                 iconAnchor: [20, 35]
             });
 
-            // Добавляем маркер
             const marker = L.marker([config.coordinates.lat, config.coordinates.lng], {
                 icon: customIcon
             }).addTo(map);
 
-            // Попап с информацией
             marker.bindPopup(`
                 <div style="padding: 10px; min-width: 220px;">
-                    <h4 style="margin: 0 0 8px 0; color: ${config.style?.colors?.detailText || '#333'}; font-size: 14px;">${escapeHtml(config.title)}</h4>
+                    <h4 style="margin: 0 0 8px 0; color: #333; font-size: 14px;">${escapeHtml(config.businessName || config.title)}</h4>
                     <p style="margin: 0 0 8px 0; color: #666; font-size: 12px;">${escapeHtml(config.address)}</p>
                     ${config.phone ? `<p style="margin: 0; font-size: 11px;"><strong>📞</strong> ${escapeHtml(config.phone)}</p>` : ''}
                 </div>
             `);
 
-            // Управление скроллом
             map.on('click', () => map.scrollWheelZoom.enable());
             map.on('mouseout', () => map.scrollWheelZoom.disable());
 
@@ -712,6 +622,11 @@
         return `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(address)}`;
     }
 
+    function parseTime(timeStr) {
+        const [hours, minutes] = String(timeStr).split(':').map(Number);
+        return (hours || 0) * 60 + (minutes || 0);
+    }
+
     function escapeHtml(text) {
         const div = document.createElement('div');
         div.textContent = text || '';
@@ -720,5 +635,18 @@
 
     function escapeAttr(text) {
         return String(text || '').replace(/"/g, '&quot;');
+    }
+
+    function showError(container, clientId, message) {
+        container.innerHTML = `
+            <div class="bhw-widget bhw-error">
+                <h3 style="margin: 0 0 15px 0;">🗺️ Map unavailable</h3>
+                <p style="margin: 0; opacity: 0.9; font-size: 0.9em;">ID: ${escapeHtml(clientId)}</p>
+                <details style="margin-top: 15px;">
+                    <summary style="cursor: pointer; opacity: 0.8;">Details</summary>
+                    <p style="margin: 10px 0 0 0; font-size: 0.8em; opacity: 0.7;">${escapeHtml(message)}</p>
+                </details>
+            </div>
+        `;
     }
 })();
