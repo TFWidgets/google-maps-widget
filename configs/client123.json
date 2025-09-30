@@ -1,58 +1,30 @@
 {
-  "title": "Bella Vista Restaurant",
-  "address": "Via Roma 123, Milan, Italy",
-  "coordinates": {
-    "lat": 45.4642,
-    "lng": 9.1900
-  },
-  "zoom": 16,
-  "phone": "+39 02 1234 5678",
-  "email": "info@bellavista.it",
-  "website": "https://bellavista.it",
-  "businessHours": "Daily 11:00-23:00",
-  "parking": "Valet parking available",
-  "showDirections": true,
-  "showCall": true,
-  "showWebsite": true,
-  "icon": "",
-  "iconHtml": "&#127829;",
-  "style": {
-    "fontFamily": "'Roboto', system-ui, sans-serif",
-    "valueFontFamily": "'Roboto', system-ui, sans-serif",
-    "colors": {
-      "background": "#ffffff",
-      "text": "white",
-      "headerBackground": "linear-gradient(135deg, #dc2626 0%, #b91c1c 50%, #991b1b 100%)",
-      "blockBackground": "rgba(255, 255, 255, 0.25)",
-      "blockBorder": "rgba(255, 255, 255, 0.40)",
-      "blockHover": "rgba(255, 255, 255, 0.35)",
-      "borderHover": "rgba(255, 255, 255, 0.60)",
-      "btnPrimary": "#dc2626",
-      "btnSecondary": "#059669",
-      "btnTertiary": "#7c3aed",
-      "detailText": "#1f2937",
-      "detailLabel": "#6b7280"
+    "businessName": "Wine & Spirits Store",
+    "address": "Downtown District, Main Street 123",
+    "coordinates": {
+        "lat": 40.7128,
+        "lng": -74.0060
     },
-    "borderRadius": {
-      "widget": 20,
-      "blocks": 14
-    },
-    "sizes": {
-      "fontSize": 1.1,
-      "padding": 28,
-      "blockPadding": 16,
-      "gap": 18,
-      "mapHeight": 350,
-      "iconSize": 52,
-      "actionsGap": 12,
-      "actionsPadding": 20,
-      "detailsPadding": 24
-    },
-    "shadow": {
-      "widget": "0 25px 70px rgba(220,38,38,0.20)",
-      "widgetHover": "0 35px 90px rgba(220,38,38,0.25)",
-      "text": "0 3px 12px rgba(0,0,0,0.4)",
-      "btnHover": "0 10px 30px rgba(0,0,0,0.22)"
+    "zoom": 16,
+    "phone": "+1 555 123 4567",
+    "email": "info@winespirits.com",
+    "website": "https://winespirits.com",
+    "businessHours": "Mon-Sat 10:00-22:00, Sun 12:00-20:00",
+    "parking": "Street parking available",
+    "showDirections": true,
+    "showCall": true,
+    "showWebsite": true,
+    "iconHtml": "&#127866;",
+    "styling": {
+        "primaryColor": "#92400e",
+        "secondaryColor": "#78350f",
+        "widgetBackground": "#fef7ed",
+        "fontFamily": "'Roboto', sans-serif",
+        "businessNameSize": "1.4em",
+        "nameSizeMobile": "1.3em",
+        "directionsColor": "#d97706",
+        "callColor": "#059669",
+        "websiteColor": "#7c3aed",
+        "borderRadius": "16px"
     }
-  }
 }
