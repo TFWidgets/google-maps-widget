@@ -1,7 +1,6 @@
 (function() {
     'use strict';
 
-    // Базовые CSS стили с CSS-переменными для полной кастомизации
     const inlineCSS = `
         .bhw-container {
             font-family: var(--bhw-font, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif);
@@ -40,14 +39,14 @@
         }
         
         .bhw-timezone-info {
-            width: var(--bhw-tz-size, 48px);
-            height: var(--bhw-tz-size, 48px);
+            width: var(--bhw-icon-size, 48px);
+            height: var(--bhw-icon-size, 48px);
             background: var(--bhw-open-color, rgba(255,255,255,0.22));
             border-radius: var(--bhw-badge-radius, 12px);
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: var(--bhw-tz-opacity, 20px);
+            font-size: var(--bhw-icon-font-size, 20px);
             backdrop-filter: blur(12px);
             border: 1px solid rgba(255,255,255,0.35);
             position: relative;
@@ -90,6 +89,26 @@
             z-index: 1;
         }
         
+        .bhw-error {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: var(--bhw-error-bg, #f8f9fa);
+            color: var(--bhw-error-text, #666);
+            z-index: 2;
+            text-align: center;
+            padding: 24px;
+        }
+        
+        .bhw-error-icon {
+            font-size: 36px;
+            margin-bottom: 12px;
+            opacity: 0.7;
+        }
+        
         .bhw-closing-info {
             background: var(--bhw-info-bg, #f8f9fa);
             padding: var(--bhw-info-padding, 18px);
@@ -106,11 +125,11 @@
         
         .bhw-hours-time {
             flex: 1;
-            padding: var(--bhw-time-padding, 14px 18px);
-            border-radius: var(--bhw-time-radius, 11px);
+            padding: var(--bhw-btn-padding, 14px 18px);
+            border-radius: var(--bhw-btn-radius, 11px);
             text-decoration: none;
-            font-weight: var(--bhw-time-weight, 700);
-            font-size: var(--bhw-time-size, 0.9em);
+            font-weight: var(--bhw-btn-weight, 700);
+            font-size: var(--bhw-btn-size, 0.9em);
             text-align: center;
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             border: none;
@@ -118,6 +137,7 @@
             position: relative;
             overflow: hidden;
             color: white;
+            display: inline-block;
         }
         
         .bhw-hours-time::before {
@@ -142,7 +162,7 @@
         
         .bhw-hours-time:hover {
             transform: translateY(-2px);
-            box-shadow: var(--bhw-time-shadow, 0 8px 24px rgba(0,0,0,0.18));
+            box-shadow: var(--bhw-btn-shadow-hover, 0 8px 24px rgba(0,0,0,0.18));
         }
         
         .bhw-hours-table {
@@ -208,15 +228,6 @@
             margin: var(--bhw-spinner-margin, 0 auto 15px);
         }
         
-        .bhw-error {
-            background: var(--bhw-error-bg, linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%));
-            padding: var(--bhw-error-padding, 30px);
-            border-radius: var(--bhw-error-radius, 16px);
-            color: var(--bhw-error-text, white);
-            text-align: center;
-            box-shadow: var(--bhw-error-shadow, 0 15px 40px rgba(255,107,107,0.4));
-        }
-        
         @keyframes bhw-spin {
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
@@ -242,13 +253,11 @@
         }
     `;
 
-    // Динамическая загрузка Leaflet
     let leafletLoaded = false;
     function loadLeaflet() {
         if (leafletLoaded || window.L) return Promise.resolve();
         
         return new Promise((resolve) => {
-            // CSS
             if (!document.querySelector('link[href*="leaflet.css"]')) {
                 const css = document.createElement('link');
                 css.rel = 'stylesheet';
@@ -258,7 +267,6 @@
                 document.head.appendChild(css);
             }
 
-            // JS
             if (!document.querySelector('script[src*="leaflet.js"]')) {
                 const script = document.createElement('script');
                 script.src = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.js';
@@ -270,7 +278,7 @@
                 };
                 script.onerror = () => {
                     console.error('[BusinessHoursWidget] Failed to load Leaflet');
-                    resolve(); // Resolve anyway, map will show error
+                    resolve();
                 };
                 document.head.appendChild(script);
             } else {
@@ -292,18 +300,15 @@
             return;
         }
 
-        // Убираем .js расширение
         if (clientId.endsWith('.js')) {
             clientId = clientId.slice(0, -3);
         }
 
-        // Проверяем, не обработан ли уже этот конкретный скрипт
         if (currentScript.dataset.bhwMounted === '1') return;
         currentScript.dataset.bhwMounted = '1';
 
         console.log(`[BusinessHoursWidget] Normalized clientId: ${clientId}`);
 
-        // Добавляем стили один раз
         if (!document.querySelector('#business-hours-widget-styles')) {
             const style = document.createElement('style');
             style.id = 'business-hours-widget-styles';
@@ -354,13 +359,12 @@
             <div class="bhw-widget">
                 <div class="bhw-loading">
                     <div class="bhw-spinner"></div>
-                    <div>Loading map widget...</div>
+                    <div>Загрузка карты...</div>
                 </div>
             </div>
         `;
     }
 
-    // Загрузка конфигурации - унифицирована с Business Hours Widget
     async function loadConfig(clientId, baseUrl) {
         if (clientId === 'local') {
             const localScript = document.querySelector('#bhw-local-config');
@@ -390,11 +394,9 @@
         }
     }
 
-    // Применение кастомных стилей с уникальным классом - унифицировано
     function applyCustomStyles(container, config, uniqueClass) {
         const s = config.styling || {};
         
-        // Создаем уникальные стили для этого виджета
         const styleElement = document.createElement('style');
         styleElement.textContent = generateUniqueStyles(uniqueClass, s);
         container.appendChild(styleElement);
@@ -474,7 +476,7 @@
                 </div>
                 
                 <div class="bhw-closing-info">
-                    ${config.showDirections ? `
+                    ${config.showDirections !== false ? `
                         <a href="${getDirectionsUrl(config.coordinates, config.address)}" 
                            target="_blank" 
                            rel="noopener noreferrer" 
@@ -483,7 +485,7 @@
                         </a>
                     ` : ''}
                     
-                    ${config.showCall && config.phone ? `
+                    ${config.showCall !== false && config.phone ? `
                         <a href="tel:${config.phone.replace(/[^\d+]/g, '')}" 
                            class="bhw-hours-time call">
                           📞 Call
@@ -511,9 +513,6 @@
 
         // Инициализируем карту
         setTimeout(() => initializeMap(mapId, config), 100);
-
-        // Применяем уникальные стили после создания HTML
-        applyCustomStyles(container, config, uniqueClass);
     }
 
     function createHoursRow(label, value) {
@@ -619,7 +618,7 @@
         if (coordinates?.lat && coordinates?.lng) {
             return `https://www.google.com/maps/dir/?api=1&destination=${coordinates.lat},${coordinates.lng}`;
         }
-        return `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(address)}`;
+        return `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(address || '')}`;
     }
 
     function parseTime(timeStr) {
