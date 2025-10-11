@@ -1,12 +1,12 @@
 {
-  "title": "hahahahahaha",
+  "title": "🏢 Tech Hub Office",
   "address": "Staroměstské náměstí 1, Prague, Czechia",
   "coordinates": {
     "lat": 50.0875,
     "lng": 14.4213
   },
   "zoom": 15,
-  "phone": "",
+  "phone": "+420 123 456 789",
   "email": "info@techhub.cz",
   "website": "https://techhub.cz",
   "businessHours": "Mon-Fri 9:00-18:00",
@@ -14,14 +14,30 @@
   "showDirections": true,
   "showCall": true,
   "showWebsite": true,
-  "theme": {
-    "primary": "#4285f4",
-    "secondary": "#34a853",
-    "background": "#ffffff",
-    "text": "#333333",
-    "headerBg": "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
-    "borderRadius": 16,
-    "mapHeight": 300
-  },
-  "fontFamily": "'Inter', system-ui, sans-serif"
+  "style": {
+    "fontFamily": "'Inter', system-ui, sans-serif",
+    "colors": {
+      "background": "#ffffff",
+      "text": "white",
+      "headerBackground": "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+      "btnPrimary": "#4285f4",
+      "btnSecondary": "#34a853",
+      "btnTertiary": "#4285f4",
+      "detailText": "#333333",
+      "detailLabel": "#666"
+    },
+    "borderRadius": {
+      "widget": 16,
+      "blocks": 12
+    },
+    "sizes": {
+      "fontSize": 1,
+      "mapHeight": 300,
+      "padding": 24,
+      "iconSize": 48,
+      "actionsGap": 10,
+      "actionsPadding": 18,
+      "detailsPadding": 22
+    }
+  }
 }
