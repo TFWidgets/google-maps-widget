@@ -1,651 +1,510 @@
-(function() {
+/*!
+ * TF Widgets — Map & Location v2 (Google Maps)
+ * Встраивание: <script src=".../embed.js" data-id="CLIENT_ID"></script>
+ * Конфиг клиента: configs/CLIENT_ID.json (формат v1 поддерживается)
+ * Карта — настоящая Google Maps через iframe:
+ *   с ключом GMAPS_EMBED_KEY — официальный Maps Embed API (бесплатный, без лимитов);
+ *   без ключа — публичная встраиваемая карта maps.google.com (тоже бесплатно).
+ * Опция "clickToLoad": карта (и куки Google) грузится только после клика посетителя — удобно для GDPR.
+ * Классы и CSS-переменные: префикс bhw- (общий для всех виджетов TF Widgets), всё ограничено классом .bhw-map.
+ */
+(function () {
     'use strict';
+    var VERSION = '2.0.0';
+    var LOG = '[TFW Map]';
+    // Ключ Google Maps Embed API (Google Cloud → APIs & Services → Credentials). Пусто = карта без ключа.
+    var GMAPS_EMBED_KEY = '';
+    // Где работает живое превью BHWMap.render() (конфигуратор на сайте)
+    var PREVIEW_DOMAINS = ['tf-widgets.com', '*.tf-widgets.com', '9ac5za-h1.myshopify.com'];
 
-    const inlineCSS = `
-        .bhw-container {
-            font-family: var(--bhw-font, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif);
-            max-width: var(--bhw-max-width, 520px);
-            margin: var(--bhw-margin, 20px auto);
+    var I18N = {
+        en: { directions: 'Directions', call: 'Call', website: 'Website', email: 'Email', open: 'Open in Google Maps', show: 'Show map', consent: 'The map is provided by Google. Loading it may set cookies.', copy: 'Copy address', copied: 'Copied', hours: 'Hours', phone: 'Phone', address: 'Address' },
+        es: { directions: 'Cómo llegar', call: 'Llamar', website: 'Sitio web', email: 'Email', open: 'Abrir en Google Maps', show: 'Mostrar mapa', consent: 'El mapa lo proporciona Google. Al cargarlo puede usar cookies.', copy: 'Copiar dirección', copied: 'Copiado', hours: 'Horario', phone: 'Teléfono', address: 'Dirección' },
+        fr: { directions: 'Itinéraire', call: 'Appeler', website: 'Site web', email: 'E-mail', open: 'Ouvrir dans Google Maps', show: 'Afficher la carte', consent: 'La carte est fournie par Google. Son chargement peut déposer des cookies.', copy: 'Copier l’adresse', copied: 'Copié', hours: 'Horaires', phone: 'Téléphone', address: 'Adresse' },
+        de: { directions: 'Route', call: 'Anrufen', website: 'Website', email: 'E-Mail', open: 'In Google Maps öffnen', show: 'Karte anzeigen', consent: 'Die Karte wird von Google bereitgestellt. Beim Laden können Cookies gesetzt werden.', copy: 'Adresse kopieren', copied: 'Kopiert', hours: 'Öffnungszeiten', phone: 'Telefon', address: 'Adresse' },
+        it: { directions: 'Indicazioni', call: 'Chiama', website: 'Sito web', email: 'Email', open: 'Apri in Google Maps', show: 'Mostra mappa', consent: 'La mappa è fornita da Google. Il caricamento può impostare cookie.', copy: 'Copia indirizzo', copied: 'Copiato', hours: 'Orari', phone: 'Telefono', address: 'Indirizzo' },
+        nl: { directions: 'Route', call: 'Bellen', website: 'Website', email: 'E-mail', open: 'Openen in Google Maps', show: 'Kaart tonen', consent: 'De kaart wordt geleverd door Google. Bij laden kunnen cookies worden geplaatst.', copy: 'Adres kopiëren', copied: 'Gekopieerd', hours: 'Openingstijden', phone: 'Telefoon', address: 'Adres' },
+        pt: { directions: 'Como chegar', call: 'Ligar', website: 'Site', email: 'E-mail', open: 'Abrir no Google Maps', show: 'Mostrar mapa', consent: 'O mapa é fornecido pelo Google. Ao carregá-lo podem ser usados cookies.', copy: 'Copiar endereço', copied: 'Copiado', hours: 'Horário', phone: 'Telefone', address: 'Endereço' },
+        pl: { directions: 'Wyznacz trasę', call: 'Zadzwoń', website: 'Strona', email: 'E-mail', open: 'Otwórz w Mapach Google', show: 'Pokaż mapę', consent: 'Mapę dostarcza Google. Jej załadowanie może zapisać pliki cookie.', copy: 'Kopiuj adres', copied: 'Skopiowano', hours: 'Godziny', phone: 'Telefon', address: 'Adres' },
+        cs: { directions: 'Trasa', call: 'Zavolat', website: 'Web', email: 'E-mail', open: 'Otevřít v Mapách Google', show: 'Zobrazit mapu', consent: 'Mapu poskytuje Google. Její načtení může uložit cookies.', copy: 'Kopírovat adresu', copied: 'Zkopírováno', hours: 'Otevírací doba', phone: 'Telefon', address: 'Adresa' },
+        sk: { directions: 'Trasa', call: 'Zavolať', website: 'Web', email: 'E-mail', open: 'Otvoriť v Mapách Google', show: 'Zobraziť mapu', consent: 'Mapu poskytuje Google. Jej načítanie môže uložiť cookies.', copy: 'Kopírovať adresu', copied: 'Skopírované', hours: 'Otváracie hodiny', phone: 'Telefón', address: 'Adresa' }
+    };
+
+    var ICON = {
+        pin: '<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 2a7 7 0 0 0-7 7c0 5.2 7 13 7 13s7-7.8 7-13a7 7 0 0 0-7-7zm0 9.5A2.5 2.5 0 1 1 12 6.5a2.5 2.5 0 0 1 0 5z"/></svg>',
+        route: '<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M21.7 11.3 12.7 2.3a1 1 0 0 0-1.4 0l-9 9a1 1 0 0 0 0 1.4l9 9a1 1 0 0 0 1.4 0l9-9a1 1 0 0 0 0-1.4zM14 14.5V12h-4v3H8v-4a1 1 0 0 1 1-1h5V7.5l3.5 3.5z"/></svg>',
+        phone: '<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M6.6 10.8a15.2 15.2 0 0 0 6.6 6.6l2.2-2.2a1 1 0 0 1 1-.25 11.4 11.4 0 0 0 3.6.57 1 1 0 0 1 1 1V20a1 1 0 0 1-1 1A17 17 0 0 1 3 4a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1c0 1.25.2 2.45.57 3.57a1 1 0 0 1-.25 1z"/></svg>',
+        web: '<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20zm6.9 6h-3a15.6 15.6 0 0 0-1.4-3.6A8 8 0 0 1 18.9 8zM12 4c.8 1.2 1.5 2.5 1.9 4h-3.8c.4-1.5 1.1-2.8 1.9-4zM4.3 14a8.2 8.2 0 0 1 0-4h3.4a16.5 16.5 0 0 0 0 4zm.8 2h3a15.6 15.6 0 0 0 1.4 3.6A8 8 0 0 1 5.1 16zm3-8h-3a8 8 0 0 1 4.4-3.6A15.6 15.6 0 0 0 8.1 8zM12 20c-.8-1.2-1.5-2.5-1.9-4h3.8c-.4 1.5-1.1 2.8-1.9 4zm2.3-6H9.7a14.7 14.7 0 0 1 0-4h4.6a14.7 14.7 0 0 1 0 4zm.3 5.6a15.6 15.6 0 0 0 1.4-3.6h3a8 8 0 0 1-4.4 3.6zm1.7-5.6a16.5 16.5 0 0 0 0-4h3.4a8.2 8.2 0 0 1 0 4z"/></svg>',
+        mail: '<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M3 5h18a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1zm9 7.2L4.4 7H4v.5l8 5.5 8-5.5V7h-.4z"/></svg>',
+        clock: '<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20zm0 18a8 8 0 1 1 0-16 8 8 0 0 1 0 16zm.5-13H11v6l5.2 3.2.8-1.3-4.5-2.7z"/></svg>',
+        info: '<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20zm1 15h-2v-6h2zm0-8h-2V7h2z"/></svg>',
+        copy: '<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M16 1H4a2 2 0 0 0-2 2v14h2V3h12zm3 4H8a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h11a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2zm0 16H8V7h11z"/></svg>'
+    };
+
+    var inlineCSS = `
+        .bhw-map { font-family: var(--bhw-font, 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif); -webkit-font-smoothing: antialiased; box-sizing: border-box; font-size: var(--bhw-font-size, 15px); line-height: 1.45; }
+        .bhw-map *, .bhw-map *::before, .bhw-map *::after { box-sizing: border-box; }
+        .bhw-map.bhw-container { width: 100%; max-width: var(--bhw-max-width, 1000px); margin: var(--bhw-margin, 24px auto); }
+        .bhw-map .bhw-widget {
+            position: relative; overflow: hidden; isolation: isolate;
+            display: grid; grid-template-columns: minmax(0, var(--bhw-info-w, 360px)) minmax(0, 1fr);
+            background: var(--bhw-bg, #ffffff); color: var(--bhw-text-color, #111111);
+            border: 1px solid var(--bhw-widget-border, rgba(0,0,0,.07)); border-radius: var(--bhw-widget-radius, 22px);
+            box-shadow: var(--bhw-shadow, 0 24px 60px -28px rgba(0,0,0,.28));
         }
-        
-        .bhw-widget {
-            background: var(--bhw-bg, #ffffff);
-            border-radius: var(--bhw-radius, 20px);
-            padding: var(--bhw-padding, 0);
-            color: var(--bhw-text-color, white);
-            box-shadow: var(--bhw-shadow, 0 20px 60px rgba(102, 126, 234, 0.4));
-            position: relative;
-            overflow: hidden;
+        .bhw-map.bhw-pos-right .bhw-widget { grid-template-columns: minmax(0, 1fr) minmax(0, var(--bhw-info-w, 360px)); }
+        .bhw-map.bhw-pos-right .bhw-info { order: 2; }
+        .bhw-map .bhw-info { display: flex; flex-direction: column; gap: 16px; padding: var(--bhw-padding, 28px); min-width: 0; }
+        .bhw-map .bhw-map-box { position: relative; min-height: var(--bhw-map-h, 380px); background: #e8eaed; }
+        .bhw-map .bhw-map-box iframe { position: absolute; inset: 0; display: block; width: 100%; height: 100%; border: 0; margin: 0; padding: 0; max-width: none; }
+
+        /* карта сверху, карточка снизу */
+        .bhw-map.bhw-stacked .bhw-widget, .bhw-map.bhw-narrow .bhw-widget { grid-template-columns: 1fr; }
+        .bhw-map.bhw-stacked .bhw-map-box, .bhw-map.bhw-narrow .bhw-map-box { order: -1; min-height: 0; height: var(--bhw-map-h, 380px); }
+        .bhw-map.bhw-stacked .bhw-info, .bhw-map.bhw-narrow .bhw-info { order: 2; }
+        /* во всю ширину с карточкой поверх карты */
+        .bhw-map.bhw-overlay .bhw-widget { display: block; min-height: var(--bhw-map-h, 420px); }
+        .bhw-map.bhw-overlay .bhw-map-box { position: absolute; inset: 0; min-height: 0; }
+        .bhw-map.bhw-overlay .bhw-info { position: relative; z-index: 2; width: min(var(--bhw-info-w, 360px), calc(100% - 32px)); margin: 16px; border-radius: calc(var(--bhw-widget-radius, 22px) - 6px); background: var(--bhw-bg, #fff); box-shadow: 0 18px 44px -14px rgba(0,0,0,.4); padding: calc(var(--bhw-padding, 28px) * .8); }
+        .bhw-map.bhw-overlay.bhw-pos-right .bhw-info { margin-left: auto; }
+        .bhw-map.bhw-overlay.bhw-narrow .bhw-widget { display: grid; min-height: 0; }
+        .bhw-map.bhw-overlay.bhw-narrow .bhw-map-box { position: relative; }
+        .bhw-map.bhw-overlay.bhw-narrow .bhw-info { width: auto; margin: 0; border-radius: 0; box-shadow: none; }
+
+        .bhw-map .bhw-head { display: flex; align-items: center; gap: 12px; min-width: 0; }
+        .bhw-map .bhw-icon { flex: none; display: grid; place-items: center; width: 46px; height: 46px; border-radius: calc(var(--bhw-block-radius, 12px) + 2px); background: var(--bhw-soft, rgba(0,0,0,.05)); font-size: 1.4em; line-height: 1; }
+        .bhw-map .bhw-logo { flex: none; display: block; max-width: 120px; max-height: 44px; object-fit: contain; border: 0; margin: 0; }
+        .bhw-map .bhw-name { margin: 0; padding: 0; font-family: inherit; font-size: var(--bhw-name-size, 1.3em); font-weight: 800; line-height: 1.2; letter-spacing: -.02em; }
+        .bhw-map .bhw-tag { margin: 2px 0 0; font-size: .86em; opacity: .66; }
+        .bhw-map .bhw-rows { display: grid; gap: 12px; margin: 0; padding: 0; list-style: none; }
+        .bhw-map .bhw-row { display: grid; grid-template-columns: 20px minmax(0, 1fr); gap: 10px; align-items: start; margin: 0; }
+        .bhw-map .bhw-row svg { width: 18px; height: 18px; margin-top: 2px; color: var(--bhw-accent, #1a73e8); }
+        .bhw-map .bhw-row-txt { min-width: 0; white-space: pre-line; overflow-wrap: anywhere; }
+        .bhw-map .bhw-row a { color: inherit; text-decoration: none; border-bottom: 1px solid color-mix(in srgb, currentColor 25%, transparent); }
+        .bhw-map .bhw-copy { display: inline-flex; align-items: center; gap: 5px; margin: 4px 0 0; padding: 0; min-height: 0; border: 0; background: none; box-shadow: none; font: inherit; font-size: .8em; font-weight: 600; color: inherit; opacity: .6; cursor: pointer; }
+        .bhw-map .bhw-copy svg { width: 13px; height: 13px; margin: 0; color: inherit; }
+        .bhw-map .bhw-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: auto; padding-top: 4px; }
+        .bhw-map .bhw-btn {
+            flex: 1 1 auto; display: inline-flex; align-items: center; justify-content: center; gap: 8px; margin: 0; padding: 11px 14px; min-height: 0;
+            border-radius: var(--bhw-block-radius, 12px); border: 1px solid var(--bhw-line, rgba(0,0,0,.12)); background: transparent; box-shadow: none;
+            font: inherit; font-size: .9em; font-weight: 700; line-height: 1.2; color: inherit; text-decoration: none !important; white-space: nowrap; cursor: pointer; transition: transform .2s, filter .2s, background .2s;
         }
-        
-        .bhw-widget::before {
-            content: '';
-            position: absolute;
-            inset: 0;
-            background: var(--bhw-overlay, radial-gradient(circle at 30% 20%, rgba(255,255,255,0.15) 0%, transparent 50%));
-            pointer-events: none;
-        }
-        
-        .bhw-header {
-            text-align: var(--bhw-header-align, left);
-            margin-bottom: var(--bhw-header-margin-bottom, 0);
-            position: relative;
-            z-index: 1;
-            background: var(--bhw-header-bg, linear-gradient(135deg, #667eea 0%, #764ba2 100%));
-            padding: var(--bhw-header-padding, 24px);
-            display: flex;
-            align-items: center;
-            gap: 16px;
-        }
-        
-        .bhw-timezone-info {
-            width: var(--bhw-icon-size, 48px);
-            height: var(--bhw-icon-size, 48px);
-            background: var(--bhw-open-color, rgba(255,255,255,0.22));
-            border-radius: var(--bhw-badge-radius, 12px);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: var(--bhw-icon-font-size, 20px);
-            backdrop-filter: blur(12px);
-            border: 1px solid rgba(255,255,255,0.35);
-            position: relative;
-            z-index: 1;
-        }
-        
-        .bhw-info {
-            flex: 1;
-            position: relative;
-            z-index: 1;
-        }
-        
-        .bhw-business-name {
-            font-size: var(--bhw-name-size, 1.35em);
-            font-weight: var(--bhw-name-weight, 700);
-            margin-bottom: var(--bhw-name-margin-bottom, 6px);
-            text-shadow: var(--bhw-name-shadow, 0 2px 8px rgba(0,0,0,0.3));
-            color: var(--bhw-name-color, inherit);
-            margin-top: 0;
-        }
-        
-        .bhw-status-badge {
-            margin: 0;
-            opacity: var(--bhw-badge-opacity, 0.92);
-            font-size: var(--bhw-badge-size, 0.9em);
-            line-height: 1.35;
-            font-weight: var(--bhw-badge-weight, 500);
-            color: inherit;
-        }
-        
-        .bhw-map-container {
-            position: relative;
-            height: var(--bhw-map-height, 300px);
-            background: #f0f2f5;
-        }
-        
-        .bhw-map {
-            width: 100%;
-            height: 100%;
-            z-index: 1;
-        }
-        
-        .bhw-error {
-            position: absolute;
-            inset: 0;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            background: var(--bhw-error-bg, #f8f9fa);
-            color: var(--bhw-error-text, #666);
-            z-index: 2;
-            text-align: center;
-            padding: 24px;
-        }
-        
-        .bhw-error-icon {
-            font-size: 36px;
-            margin-bottom: 12px;
-            opacity: 0.7;
-        }
-        
-        .bhw-closing-info {
-            background: var(--bhw-info-bg, #f8f9fa);
-            padding: var(--bhw-info-padding, 18px);
-            border-radius: var(--bhw-info-radius, 0);
-            text-align: center;
-            font-weight: var(--bhw-info-weight, 600);
-            margin-bottom: var(--bhw-info-margin-bottom, 0);
-            color: var(--bhw-info-color, inherit);
-            position: relative;
-            z-index: 1;
-            display: flex;
-            gap: 10px;
-        }
-        
-        .bhw-hours-time {
-            flex: 1;
-            padding: var(--bhw-btn-padding, 14px 18px);
-            border-radius: var(--bhw-btn-radius, 11px);
-            text-decoration: none;
-            font-weight: var(--bhw-btn-weight, 700);
-            font-size: var(--bhw-btn-size, 0.9em);
-            text-align: center;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            border: none;
-            cursor: pointer;
-            position: relative;
-            overflow: hidden;
-            color: white;
-            display: inline-block;
-        }
-        
-        .bhw-hours-time::before {
-            content: '';
-            position: absolute;
-            inset: 0;
-            background: linear-gradient(45deg, rgba(255,255,255,0.15) 0%, transparent 50%);
-            pointer-events: none;
-        }
-        
-        .bhw-hours-time.directions {
-            background: var(--bhw-open-color, #4285f4);
-        }
-        
-        .bhw-hours-time.call {
-            background: var(--bhw-closed-color, #34a853);
-        }
-        
-        .bhw-hours-time.website {
-            background: var(--bhw-tertiary-color, #6366f1);
-        }
-        
-        .bhw-hours-time:hover {
-            transform: translateY(-2px);
-            box-shadow: var(--bhw-btn-shadow-hover, 0 8px 24px rgba(0,0,0,0.18));
-        }
-        
-        .bhw-hours-table {
-            background: var(--bhw-table-bg, #ffffff);
-            border-radius: var(--bhw-table-radius, 0);
-            padding: var(--bhw-table-padding, 22px);
-            color: var(--bhw-table-text, #333);
-            margin: var(--bhw-table-margin, 0);
-            position: relative;
-            z-index: 1;
-        }
-        
-        .bhw-hours-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: var(--bhw-row-padding, 10px 0);
-            border-bottom: var(--bhw-row-border, 1px solid #f0f0f0);
-            font-size: var(--bhw-day-size, 0.9em);
-        }
-        
-        .bhw-hours-row:last-child {
-            border-bottom: none;
-        }
-        
-        .bhw-day-name {
-            font-weight: var(--bhw-day-weight, 600);
-            color: var(--bhw-day-color, #666);
-        }
-        
-        .bhw-hours-time.detail-value {
-            color: var(--bhw-time-color, #333333);
-            text-align: right;
-            font-weight: var(--bhw-time-weight, 500);
-            background: none;
-            padding: 0;
-            border-radius: 0;
-            transform: none;
-            box-shadow: none;
-            cursor: default;
-        }
-        
-        .bhw-hours-time.detail-value:hover {
-            transform: none;
-            box-shadow: none;
-        }
-        
-        .bhw-loading {
-            text-align: center;
-            padding: var(--bhw-loading-padding, 40px);
-            position: relative;
-            z-index: 1;
-            color: var(--bhw-loading-text-color, white);
-        }
-        
-        .bhw-spinner {
-            width: 40px;
-            height: 40px;
-            border: var(--bhw-spinner-border, 3px solid rgba(255,255,255,0.3));
-            border-top: var(--bhw-spinner-top-border, 3px solid white);
-            border-radius: 50%;
-            animation: bhw-spin 1s linear infinite;
-            margin: var(--bhw-spinner-margin, 0 auto 15px);
-        }
-        
-        @keyframes bhw-spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-        
-        @media (max-width: 480px) {
-            .bhw-widget {
-                padding: var(--bhw-padding-mobile, 0);
-            }
-            .bhw-header {
-                padding: var(--bhw-header-padding-mobile, 20px);
-            }
-            .bhw-hours-table {
-                padding: var(--bhw-table-padding-mobile, 18px);
-            }
-            .bhw-business-name {
-                font-size: var(--bhw-name-size-mobile, 1.2em);
-            }
-            .bhw-closing-info {
-                flex-direction: column;
-                gap: 8px;
-            }
-        }
+        .bhw-map .bhw-btn:hover { transform: translateY(-1px); background: var(--bhw-soft, rgba(0,0,0,.05)); }
+        .bhw-map .bhw-btn.bhw-primary { background: var(--bhw-accent, #1a73e8); border-color: transparent; color: var(--bhw-accent-text, #fff); }
+        .bhw-map .bhw-btn.bhw-primary:hover { filter: brightness(1.07); background: var(--bhw-accent, #1a73e8); }
+        .bhw-map .bhw-btn svg { width: 17px; height: 17px; flex: none; }
+
+        /* заглушка до согласия (GDPR) */
+        .bhw-map .bhw-consent { position: absolute; inset: 0; display: grid; place-items: center; padding: 20px; text-align: center; background:
+            linear-gradient(0deg, rgba(0,0,0,.02), rgba(0,0,0,.02)),
+            repeating-linear-gradient(35deg, #e3e6ea 0 16px, #eceff2 16px 32px); color: #202124; }
+        .bhw-map .bhw-consent-in { display: grid; justify-items: center; gap: 10px; max-width: 320px; }
+        .bhw-map .bhw-consent svg { width: 34px; height: 34px; color: var(--bhw-accent, #1a73e8); }
+        .bhw-map .bhw-consent p { margin: 0; font-size: .82em; opacity: .75; }
+        .bhw-map .bhw-consent .bhw-btn { flex: none; background: var(--bhw-accent, #1a73e8); color: var(--bhw-accent-text, #fff); border-color: transparent; }
+
+        .bhw-map .bhw-btn:focus-visible, .bhw-map .bhw-copy:focus-visible { outline: 2px solid var(--bhw-accent, #1a73e8); outline-offset: 2px; }
+        @media (max-width: 560px) { .bhw-map .bhw-info { padding: var(--bhw-padding-mobile, 20px); } }
+        @media (prefers-reduced-motion: reduce) { .bhw-map * { transition: none !important; } }
+
+        /* защита от тем сайта, которые красят весь текст через color: ... !important */
+        .bhw-map .bhw-info { color: var(--bhw-text-color, #111) !important; }
+        .bhw-map .bhw-info :where(*) { color: inherit !important; }
+        .bhw-map .bhw-info .bhw-row svg { color: var(--bhw-accent, #1a73e8) !important; }
+        .bhw-map .bhw-btn.bhw-primary, .bhw-map .bhw-btn.bhw-primary *, .bhw-map .bhw-consent .bhw-btn, .bhw-map .bhw-consent .bhw-btn * { color: var(--bhw-accent-text, #fff) !important; }
+        .bhw-map .bhw-consent { color: #202124 !important; }
+        .bhw-map .bhw-consent :where(p, div, span, a) { color: inherit !important; }
+        .bhw-map .bhw-consent svg { color: var(--bhw-accent, #1a73e8) !important; }
     `;
 
-    let leafletLoaded = false;
-    function loadLeaflet() {
-        if (leafletLoaded || window.L) return Promise.resolve();
-        
-        return new Promise((resolve) => {
-            if (!document.querySelector('link[href*="leaflet.css"]')) {
-                const css = document.createElement('link');
-                css.rel = 'stylesheet';
-                css.href = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css';
-                css.integrity = 'sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=';
-                css.crossOrigin = '';
-                document.head.appendChild(css);
-            }
+    /* =========================================================
+       ПУБЛИЧНЫЕ API
+       ========================================================= */
+    window.BusinessHoursWidgets = window.BusinessHoursWidgets || {};
+    window.BusinessHoursWidgets.map = window.BusinessHoursWidgets.map || {};
 
-            if (!document.querySelector('script[src*="leaflet.js"]')) {
-                const script = document.createElement('script');
-                script.src = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.js';
-                script.integrity = 'sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=';
-                script.crossOrigin = '';
-                script.onload = () => {
-                    leafletLoaded = true;
-                    resolve();
-                };
-                script.onerror = () => {
-                    console.error('[BusinessHoursWidget] Failed to load Leaflet');
-                    resolve();
-                };
-                document.head.appendChild(script);
-            } else {
-                leafletLoaded = true;
-                resolve();
-            }
-        });
-    }
+    // Живое превью для конфигуратора: BHWMap.render(container, config) -> { update, setState, destroy }
+    var api = window.BHWMap = window.BHWMap || {};
+    api.version = VERSION;
+    api.defaults = getDefaultConfig;
+    api.checkAccess = bhwCheckAccess;
+    api.mapUrl = mapUrl;
+    api.render = function (container, config) {
+        var noop = { destroy: function () {}, update: function () {}, setState: function () {} };
+        if (!bhwCheckAccess({ domains: PREVIEW_DOMAINS }).ok) { console.warn(LOG, 'preview is only available on tf-widgets.com'); return noop; }
+        injectBaseStyles();
+        if (container._bhwMapDestroy) container._bhwMapDestroy();
+        var cls = container.__bhwMapClass || (container.__bhwMapClass = 'bhw-map-preview-' + Math.random().toString(36).slice(2, 8));
+        var widget = null, lastSrc = '';
+        function build(cfg) {
+            var n = normalizeConfig(cfg || {});
+            // карту (iframe) не трогаем, если её адрес не менялся: меняем только карточку и стили — превью не мигает
+            var src = srcOf(n);
+            if (widget && src === lastSrc && !n.clickToLoad) { widget.refresh(n); return; }
+            if (widget) widget.destroy();
+            widget = mountWidget(n, cls, 'preview', { inline: container });
+            lastSrc = src;
+        }
+        build(config);
+        var ctrl = {
+            update: function (cfg) { build(cfg); },
+            setState: function () {},
+            destroy: function () { if (widget) widget.destroy(); widget = null; container._bhwMapDestroy = null; }
+        };
+        container._bhwMapDestroy = ctrl.destroy;
+        return ctrl;
+    };
 
+    /* =========================================================
+       АВТОЗАПУСК ПО <script data-id="..."> (только свой тег)
+       ========================================================= */
     try {
-        const currentScript = document.currentScript || (function() {
-            const scripts = document.getElementsByTagName('script');
+        var currentScript = document.currentScript || (function () {
+            var scripts = document.getElementsByTagName('script');
             return scripts[scripts.length - 1];
         })();
-
-        let clientId = currentScript.dataset.id;
-        if (!clientId) {
-            console.error('[BusinessHoursWidget] data-id обязателен');
-            return;
-        }
-
-        if (clientId.endsWith('.js')) {
-            clientId = clientId.slice(0, -3);
-        }
-
-        if (currentScript.dataset.bhwMounted === '1') return;
-        currentScript.dataset.bhwMounted = '1';
-
-        console.log(`[BusinessHoursWidget] Normalized clientId: ${clientId}`);
-
-        if (!document.querySelector('#business-hours-widget-styles')) {
-            const style = document.createElement('style');
-            style.id = 'business-hours-widget-styles';
-            style.textContent = inlineCSS;
-            document.head.appendChild(style);
-        }
-
-        // Определяем baseUrl
-        const baseUrl = currentScript.src ? 
-            currentScript.src.replace(/\/[^\/]*$/, '') : 
-            './';
-
-        // Создаем контейнер с уникальным классом
-        const uniqueClass = `bhw-${clientId}-${Date.now()}`;
-        const container = createContainer(currentScript, clientId, uniqueClass);
-        
-        // Показываем загрузку
-        showLoading(container);
-
-        // Загружаем Leaflet и конфигурацию параллельно
-        Promise.all([
-            loadLeaflet(),
+        if (currentScript && currentScript.dataset && currentScript.dataset.id && currentScript.dataset.bhwMounted !== '1') {
+            currentScript.dataset.bhwMounted = '1';
+            var debug = currentScript.dataset.debug === '1';
+            var clientId = normalizeId(currentScript.dataset.id);
+            var baseUrl = getBasePath(currentScript.src);
             loadConfig(clientId, baseUrl)
-        ]).then(([, config]) => {
-            applyCustomStyles(container, config, uniqueClass);
-            createBusinessHoursWidget(container, config, uniqueClass);
-            console.log(`[BusinessHoursWidget] Виджет ${clientId} успешно создан`);
-        })
-        .catch(error => {
-            console.error('[BusinessHoursWidget] Ошибка:', error);
-            showError(container, clientId, error.message);
-        });
-
-    } catch (error) {
-        console.error('[BusinessHoursWidget] Критическая ошибка:', error);
-    }
-
-    function createContainer(scriptElement, clientId, uniqueClass) {
-        const container = document.createElement('div');
-        container.id = `business-hours-widget-${clientId}`;
-        container.className = `bhw-container ${uniqueClass}`;
-        scriptElement.parentNode.insertBefore(container, scriptElement.nextSibling);
-        return container;
-    }
-
-    function showLoading(container) {
-        container.innerHTML = `
-            <div class="bhw-widget">
-                <div class="bhw-loading">
-                    <div class="bhw-spinner"></div>
-                    <div>Загрузка карты...</div>
-                </div>
-            </div>
-        `;
-    }
-
-    async function loadConfig(clientId, baseUrl) {
-        if (clientId === 'local') {
-            const localScript = document.querySelector('#bhw-local-config');
-            if (!localScript) {
-                throw new Error('Локальный конфиг не найден на странице (#bhw-local-config)');
-            }
-            try {
-                return JSON.parse(localScript.textContent);
-            } catch (err) {
-                throw new Error('Ошибка парсинга локального конфига: ' + err.message);
-            }
-        } else {
-            const configUrl = `${baseUrl}/configs/${encodeURIComponent(clientId)}.json?v=${Date.now()}`;
-            try {
-                const response = await fetch(configUrl, { cache: 'no-cache', headers: { 'Accept': 'application/json' } });
-                if (!response.ok) throw new Error(`HTTP ${response.status}`);
-                return await response.json();
-            } catch (error) {
-                console.warn(`[BusinessHoursWidget] Основной конфиг недоступен, используем demo: ${error.message}`);
-                const demoResponse = await fetch(`${baseUrl}/configs/demo.json?v=${Date.now()}`, {
-                    cache: 'no-cache',
-                    headers: { 'Accept': 'application/json' }
+                .then(function (fetched) {
+                    var access = bhwCheckAccess(fetched);
+                    if (!access.ok) {
+                        console.warn(LOG, 'widget "' + clientId + '" is not active on ' + (location.hostname || 'this page') + ': ' + access.reason);
+                        return;
+                    }
+                    injectBaseStyles();
+                    var cfg = normalizeConfig(fetched);
+                    if (debug) console.log(LOG, 'config "' + clientId + '":', cfg);
+                    var mount = function () {
+                        var w = mountWidget(cfg, 'bhw-map-' + clientId.replace(/[^a-z0-9_-]/gi, '') + '-' + Date.now(), clientId, { anchor: currentScript });
+                        window.BusinessHoursWidgets.map[clientId] = w;
+                    };
+                    if (document.body) mount(); else document.addEventListener('DOMContentLoaded', mount);
+                })
+                .catch(function (error) {
+                    // Нет конфига = нет виджета
+                    console.warn(LOG, 'config "' + clientId + '" not loaded:', error.message);
                 });
-                if (!demoResponse.ok) throw new Error('Конфигурация недоступна');
-                return await demoResponse.json();
-            }
+        }
+    } catch (error) {
+        console.error(LOG, 'critical error:', error);
+    }
+
+    /* =========================================================
+       ФУНКЦИИ
+       ========================================================= */
+    function injectBaseStyles() {
+        if (!document.getElementById('map-widget-styles-v2')) {
+            var style = document.createElement('style');
+            style.id = 'map-widget-styles-v2';
+            style.textContent = inlineCSS;
+            (document.head || document.documentElement).appendChild(style);
         }
     }
 
-    function applyCustomStyles(container, config, uniqueClass) {
-        const s = config.styling || {};
-        
-        const styleElement = document.createElement('style');
-        styleElement.textContent = generateUniqueStyles(uniqueClass, s);
-        container.appendChild(styleElement);
+    /* ---------------------------------------------------------
+       ДОСТУП (общий блок для всех виджетов TF Widgets — копировать без изменений)
+       В конфиге клиента:
+         "active": true,                       // false = виджет выключен (например, подписка отменена)
+         "domains": ["client.com", "client-shop.myshopify.com", "*.client.com"]
+       "client.com" разрешает client.com и www.client.com,
+       "*.client.com" — любые поддомены (shop.client.com и т.д.).
+       Без списка domains виджет не запускается.
+       На localhost и при открытии файла с компьютера работает всегда (для тестов).
+       --------------------------------------------------------- */
+    function bhwCheckAccess(config) {
+        config = config || {};
+        if (config.active === false) return { ok: false, reason: 'widget is switched off ("active": false)' };
+        var host = String(location.hostname || '').toLowerCase().replace(/^www\./, '');
+        if (!host || host === 'localhost' || host === '127.0.0.1' || location.protocol === 'file:') return { ok: true };
+        var list = config.domains;
+        if (typeof list === 'string') list = list.split(/[\s,]+/);
+        if (!Array.isArray(list) || !list.length) return { ok: false, reason: 'no "domains" in config' };
+        for (var i = 0; i < list.length; i++) {
+            var d = String(list[i] || '').trim().toLowerCase()
+                .replace(/^[a-z]+:\/\//, '').replace(/[\/:].*$/, '').replace(/^www\./, '');
+            if (!d) continue;
+            if (d.indexOf('*.') === 0) {
+                var base = d.slice(2);
+                if (host === base || host.slice(-(base.length + 1)) === '.' + base) return { ok: true };
+            } else if (host === d) {
+                return { ok: true };
+            }
+        }
+        return { ok: false, reason: 'domain is not in "domains"' };
     }
 
-    function generateUniqueStyles(uniqueClass, styling) {
-        const s = styling;
-        const background = s.primaryColor && s.secondaryColor ? 
-            `linear-gradient(135deg, ${s.primaryColor} 0%, ${s.secondaryColor} 100%)` : 
-            (s.backgroundColor || 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)');
+    function normalizeId(id) { return String(id || 'demo').replace(/\.(json|js)$/i, ''); }
+    function getBasePath(src) {
+        if (!src) return './';
+        try { var url = new URL(src, location.href); return url.origin + url.pathname.replace(/\/[^\/]*$/, '/'); }
+        catch (error) { return './'; }
+    }
+    function loadConfig(clientId, baseUrl) {
+        if (clientId === 'local') {
+            var el = document.querySelector('#bhw-local-config');
+            if (!el) return Promise.reject(new Error('#bhw-local-config not found'));
+            try { return Promise.resolve(JSON.parse(el.textContent)); } catch (e) { return Promise.reject(e); }
+        }
+        var url = baseUrl + 'configs/' + encodeURIComponent(clientId) + '.json?v=' + Date.now();
+        return fetch(url, { cache: 'no-store', headers: { 'Accept': 'application/json' } })
+            .then(function (r) { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); });
+    }
 
-        return `
-            .${uniqueClass} {
-                font-family: ${s.fontFamily || 'inherit'};
+    function getDefaultConfig() {
+        return {
+            layout: 'split',                // split — карточка + карта рядом; stacked — карта сверху; overlay — карта во всю ширину, карточка поверх
+            infoPosition: 'left',           // left | right (для split и overlay)
+            name: 'Visit us',
+            tagline: '',
+            icon: '',
+            logo: '',
+            address: '',
+            mapQuery: '',                   // что искать на карте, если отличается от адреса (например "Название, адрес")
+            lat: null, lng: null,           // точные координаты (необязательно)
+            zoom: 15,
+            mapType: 'roadmap',             // roadmap | satellite
+            mapHeight: 380,
+            phone: '',
+            email: '',
+            website: '',
+            hours: '',                      // несколько строк текста
+            note: '',                       // парковка, вход и т.п.
+            showDirections: true,
+            showCall: true,
+            showWebsite: false,
+            showEmail: false,
+            showCopy: true,
+            clickToLoad: false,             // true — карта грузится после клика (GDPR)
+            locale: 'en',
+            style: {
+                fontFamily: "'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif",
+                colors: {
+                    background: '#ffffff',
+                    text: '#111111',
+                    accent: '#1a73e8',
+                    accentText: '#ffffff',
+                    widgetBorder: 'rgba(0, 0, 0, 0.07)',
+                    line: 'rgba(0, 0, 0, 0.12)',
+                    soft: 'rgba(0, 0, 0, 0.05)'
+                },
+                borderRadius: { widget: 22, blocks: 12 },
+                sizes: { fontSize: 1, padding: 28, width: 1000, infoWidth: 360 },
+                shadow: { widget: '0 24px 60px -28px rgba(0, 0, 0, 0.28)' }
             }
-            
-            .${uniqueClass} .bhw-widget {
-                background: ${s.widgetBackground || '#ffffff'};
-                border-radius: ${s.borderRadius || '20px'};
-                color: ${s.textColor || 'white'};
-            }
-            
-            .${uniqueClass} .bhw-header {
-                background: ${background};
-                padding: ${s.padding || '24px'};
-            }
-            
-            .${uniqueClass} .bhw-business-name {
-                font-size: ${s.businessNameSize || '1.35em'};
-            }
-            
-            .${uniqueClass} .bhw-hours-time.directions {
-                background: ${s.directionsColor || '#4285f4'};
-            }
-            
-            .${uniqueClass} .bhw-hours-time.call {
-                background: ${s.callColor || '#34a853'};
-            }
-            
-            .${uniqueClass} .bhw-hours-time.website {
-                background: ${s.websiteColor || '#6366f1'};
-            }
-            
-            @media (max-width: 480px) {
-                .${uniqueClass} .bhw-header {
-                    padding: ${s.paddingMobile || '20px'};
+        };
+    }
+
+    function stripEmojiPrefix(s) { return String(s || '').replace(/^[\u{1F000}-\u{1FFFF}☀-➿️\s]+/u, '').trim(); }
+
+    /* v1: { businessName|title, address, coordinates{lat,lng}, zoom, phone, email, website, businessHours, parking,
+             showDirections, showCall, showWebsite, iconHtml, styling{...} | theme{...} | style{colors{btnPrimary...}} } */
+    function normalizeConfig(raw) {
+        raw = raw || {};
+        var base = getDefaultConfig();
+        var legacy = !raw.layout && (raw.businessName || raw.title || raw.coordinates);
+        if (legacy) {
+            var st = raw.styling || {}, th = raw.theme || {}, sc = (raw.style && raw.style.colors) || {};
+            var titleRaw = raw.businessName || raw.title || '';
+            var emoji = (String(titleRaw).match(/^([\u{1F000}-\u{1FFFF}☀-➿]️?)/u) || [])[1] || '';
+            var accent = st.directionsColor || st.primaryColor || th.primary || sc.btnPrimary || '#1a73e8';
+            raw = {
+                layout: 'split', name: stripEmojiPrefix(titleRaw) || 'Visit us', icon: raw.iconHtml || emoji,
+                address: raw.address || '', lat: raw.coordinates && raw.coordinates.lat, lng: raw.coordinates && raw.coordinates.lng,
+                zoom: raw.zoom || 15, phone: raw.phone || '', email: raw.email || '', website: raw.website || '',
+                hours: raw.businessHours || '', note: raw.parking ? 'Parking: ' + raw.parking : '',
+                showDirections: raw.showDirections !== false, showCall: raw.showCall !== false, showWebsite: !!raw.showWebsite, showEmail: !!raw.email,
+                mapHeight: th.mapHeight || (raw.style && raw.style.sizes && raw.style.sizes.mapHeight) || 360,
+                style: {
+                    fontFamily: st.fontFamily || raw.fontFamily || base.style.fontFamily,
+                    colors: { background: st.widgetBackground || th.background || sc.background || '#ffffff', text: th.text || '#111111', accent: accent },
+                    borderRadius: { widget: parseFloat(st.borderRadius) || th.borderRadius || 20 }
                 }
-                .${uniqueClass} .bhw-business-name {
-                    font-size: ${s.nameSizeMobile || '1.2em'};
-                }
-            }
-        `;
-    }
-
-    function createBusinessHoursWidget(container, config, uniqueClass) {
-        const mapId = `map-${uniqueClass}`;
-
-        // Безопасное отображение иконки
-        const iconHtml = generateTimezoneDisplay(config);
-
-        container.innerHTML = `
-            <div class="bhw-widget">
-                <div class="bhw-header">
-                    <div class="bhw-timezone-info">${iconHtml}</div>
-                    <div class="bhw-info">
-                        <h2 class="bhw-business-name">${escapeHtml(config.businessName || config.title || 'Map Location')}</h2>
-                        <div class="bhw-status-badge">${escapeHtml(config.address || 'Address not provided')}</div>
-                    </div>
-                </div>
-                
-                <div class="bhw-map-container">
-                    <div id="${mapId}" class="bhw-map"></div>
-                    <div class="bhw-error" style="display: none;">
-                        <div class="bhw-error-icon">⚠️</div>
-                        <p>Map temporarily unavailable</p>
-                    </div>
-                </div>
-                
-                <div class="bhw-closing-info">
-                    ${config.showDirections !== false ? `
-                        <a href="${getDirectionsUrl(config.coordinates, config.address)}" 
-                           target="_blank" 
-                           rel="noopener noreferrer" 
-                           class="bhw-hours-time directions">
-                          🚗 Directions
-                        </a>
-                    ` : ''}
-                    
-                    ${config.showCall !== false && config.phone ? `
-                        <a href="tel:${config.phone.replace(/[^\d+]/g, '')}" 
-                           class="bhw-hours-time call">
-                          📞 Call
-                        </a>
-                    ` : ''}
-                    
-                    ${config.showWebsite && config.website ? `
-                        <a href="${escapeAttr(config.website)}" 
-                           target="_blank" 
-                           rel="noopener noreferrer" 
-                           class="bhw-hours-time website">
-                          🌐 Website
-                        </a>
-                    ` : ''}
-                </div>
-                
-                <div class="bhw-hours-table">
-                    ${config.phone ? createHoursRow('Phone:', config.phone) : ''}
-                    ${config.email ? createHoursRow('Email:', config.email) : ''}
-                    ${config.businessHours ? createHoursRow('Business Hours:', config.businessHours) : ''}
-                    ${config.parking ? createHoursRow('Parking:', config.parking) : ''}
-                </div>
-            </div>
-        `;
-
-        // Инициализируем карту
-        setTimeout(() => initializeMap(mapId, config), 100);
-    }
-
-    function createHoursRow(label, value) {
-        return `
-            <div class="bhw-hours-row">
-                <span class="bhw-day-name">${escapeHtml(label)}</span>
-                <span class="bhw-hours-time detail-value">${escapeHtml(value)}</span>
-            </div>
-        `;
-    }
-
-    function generateTimezoneDisplay(config) {
-        // Приоритет: iconHtml > icon > дефолт
-        if (config.iconHtml && config.iconHtml.trim()) {
-            if (config.iconHtml.includes('&') || config.iconHtml.includes('<')) {
-                return config.iconHtml;
-            }
-            return escapeHtml(config.iconHtml);
+            };
         }
-        
-        if (config.icon && config.icon.trim()) {
-            return escapeHtml(config.icon);
-        }
-        
-        // Дефолтная иконка
-        return '&#127970;'; // 🏢
+        var cfg = mergeDeep(base, raw);
+        cfg._t = mergeDeep(I18N[I18N[cfg.locale] ? cfg.locale : 'en'], {});
+        cfg._legacy = !!legacy;
+        return cfg;
     }
 
-    function initializeMap(mapId, config) {
-        try {
-            if (!window.L) {
-                showMapError(mapId);
-                return;
-            }
-
-            const map = L.map(mapId, {
-                center: [config.coordinates.lat, config.coordinates.lng],
-                zoom: config.zoom || 15,
-                zoomControl: true,
-                scrollWheelZoom: false
-            });
-
-            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                attribution: '© OpenStreetMap contributors',
-                maxZoom: 19
-            }).addTo(map);
-
-            const iconHtml = generateTimezoneDisplay(config);
-            const customIcon = L.divIcon({
-                html: `
-                    <div style="
-                        width: 40px; height: 40px;
-                        background: ${config.styling?.directionsColor || '#4285f4'};
-                        border-radius: 50% 50% 50% 0;
-                        transform: rotate(-45deg);
-                        display: flex; align-items: center; justify-content: center;
-                        box-shadow: 0 6px 18px rgba(0,0,0,0.25);
-                        border: 3px solid white;
-                    ">
-                        <div style="
-                            transform: rotate(45deg);
-                            font-size: 16px;
-                            color: white;
-                        ">${iconHtml}</div>
-                    </div>
-                `,
-                className: 'bhw-custom-map-marker',
-                iconSize: [40, 40],
-                iconAnchor: [20, 35]
-            });
-
-            const marker = L.marker([config.coordinates.lat, config.coordinates.lng], {
-                icon: customIcon
-            }).addTo(map);
-
-            marker.bindPopup(`
-                <div style="padding: 10px; min-width: 220px;">
-                    <h4 style="margin: 0 0 8px 0; color: #333; font-size: 14px;">${escapeHtml(config.businessName || config.title)}</h4>
-                    <p style="margin: 0 0 8px 0; color: #666; font-size: 12px;">${escapeHtml(config.address)}</p>
-                    ${config.phone ? `<p style="margin: 0; font-size: 11px;"><strong>📞</strong> ${escapeHtml(config.phone)}</p>` : ''}
-                </div>
-            `);
-
-            map.on('click', () => map.scrollWheelZoom.enable());
-            map.on('mouseout', () => map.scrollWheelZoom.disable());
-
-        } catch (error) {
-            console.error('Map initialization error:', error);
-            showMapError(mapId);
-        }
+    function isObj(v) { return v && typeof v === 'object' && !Array.isArray(v); }
+    function mergeDeep(base, over) {
+        var out = {};
+        Object.keys(base || {}).forEach(function (k) { out[k] = isObj(base[k]) ? mergeDeep(base[k], {}) : base[k]; });
+        Object.keys(over || {}).forEach(function (k) {
+            var v = over[k];
+            if (isObj(v) && isObj(out[k])) out[k] = mergeDeep(out[k], v);
+            else if (v !== undefined) out[k] = v;
+        });
+        return out;
     }
-
-    function showMapError(mapId) {
-        const mapEl = document.getElementById(mapId);
-        const errorEl = mapEl?.parentNode?.querySelector('.bhw-error');
-        if (mapEl && errorEl) {
-            mapEl.style.display = 'none';
-            errorEl.style.display = 'flex';
-        }
+    function cssValue(v, fallback) { if (v === undefined || v === null || v === '') return fallback; return String(v).replace(/[;{}<>]/g, ''); }
+    function num(v, fallback) { var n = Number(v); return isFinite(n) && v !== '' && v !== null ? n : fallback; }
+    function safeUrl(url) {
+        var u = String(url || '').trim();
+        if (!u) return '';
+        if (/^https?:\/\//i.test(u)) return u;
+        if (/^[\w.-]+\.[a-z]{2,}(\/|$)/i.test(u)) return 'https://' + u;
+        return '';
     }
-
-    function getDirectionsUrl(coordinates, address) {
-        if (coordinates?.lat && coordinates?.lng) {
-            return `https://www.google.com/maps/dir/?api=1&destination=${coordinates.lat},${coordinates.lng}`;
-        }
-        return `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(address || '')}`;
-    }
-
-    function parseTime(timeStr) {
-        const [hours, minutes] = String(timeStr).split(':').map(Number);
-        return (hours || 0) * 60 + (minutes || 0);
-    }
-
     function escapeHtml(text) {
-        const div = document.createElement('div');
-        div.textContent = text || '';
-        return div.innerHTML;
+        return String(text == null ? '' : text).replace(/[&<>"']/g, function (c) {
+            return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+        });
+    }
+    function renderIcon(icon) {
+        var s = String(icon || '').trim();
+        if (!s) return '';
+        if (/^(&#?[a-z0-9]+;\s*)+$/i.test(s)) return s;
+        return escapeHtml(s.slice(0, 8));
+    }
+    function hasCoords(cfg) { return isFinite(parseFloat(cfg.lat)) && isFinite(parseFloat(cfg.lng)) && cfg.lat !== null && cfg.lng !== null && cfg.lat !== '' && cfg.lng !== ''; }
+    function placeQuery(cfg) {
+        if (cfg.mapQuery) return String(cfg.mapQuery);
+        if (cfg.address) return (cfg.name && !cfg._legacy ? cfg.name + ', ' : '') + cfg.address;
+        if (hasCoords(cfg)) return parseFloat(cfg.lat) + ',' + parseFloat(cfg.lng);
+        return cfg.name || '';
+    }
+    /* адрес карты: официальный Embed API (с ключом) или публичная встраиваемая карта (без ключа) */
+    function mapUrl(cfg) {
+        var q = placeQuery(cfg); if (!q) return '';
+        var z = Math.max(3, Math.min(21, Math.round(num(cfg.zoom, 15)))), sat = cfg.mapType === 'satellite', hl = cfg.locale || 'en';
+        if (GMAPS_EMBED_KEY) {
+            return 'https://www.google.com/maps/embed/v1/place?key=' + encodeURIComponent(GMAPS_EMBED_KEY) + '&q=' + encodeURIComponent(q) +
+                '&zoom=' + z + '&maptype=' + (sat ? 'satellite' : 'roadmap') + '&language=' + encodeURIComponent(hl);
+        }
+        return 'https://maps.google.com/maps?q=' + encodeURIComponent(q) + '&z=' + z + '&t=' + (sat ? 'k' : 'm') + '&hl=' + encodeURIComponent(hl) + '&ie=UTF8&output=embed';
+    }
+    function srcOf(cfg) { return /^https:\/\/(maps\.google\.com\/maps\?|www\.google\.com\/maps\/embed\/)/.test(cfg._mapSrc || '') ? cfg._mapSrc : mapUrl(cfg); }
+    function directionsUrl(cfg) {
+        var d = hasCoords(cfg) && !cfg.address ? parseFloat(cfg.lat) + ',' + parseFloat(cfg.lng) : placeQuery(cfg);
+        return 'https://www.google.com/maps/dir/?api=1&destination=' + encodeURIComponent(d);
+    }
+    function openUrl(cfg) { return 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(placeQuery(cfg)); }
+
+    function applyCustomStyles(uniqueClass, cfg) {
+        var id = 'bhw-map-style-' + uniqueClass;
+        var el = document.getElementById(id);
+        if (!el) { el = document.createElement('style'); el.id = id; (document.head || document.documentElement).appendChild(el); }
+        var s = cfg.style || {}, c = s.colors || {}, z = s.sizes || {}, r = s.borderRadius || {}, sh = s.shadow || {};
+        var fs = num(z.fontSize, 1), pad = num(z.padding, 28);
+        el.textContent = '.' + uniqueClass + '{' +
+            '--bhw-font:' + cssValue(s.fontFamily, "'Inter', system-ui, sans-serif") + ';' +
+            '--bhw-font-size:' + (15 * fs).toFixed(2) + 'px;' +
+            '--bhw-max-width:' + Math.round(num(z.width, 1000)) + 'px;' +
+            '--bhw-info-w:' + Math.round(num(z.infoWidth, 360)) + 'px;' +
+            '--bhw-map-h:' + Math.round(Math.max(200, Math.min(800, num(cfg.mapHeight, 380)))) + 'px;' +
+            '--bhw-bg:' + cssValue(c.background, '#ffffff') + ';' +
+            '--bhw-text-color:' + cssValue(c.text, '#111111') + ';' +
+            '--bhw-accent:' + cssValue(c.accent, '#1a73e8') + ';' +
+            '--bhw-accent-text:' + cssValue(c.accentText, '#ffffff') + ';' +
+            '--bhw-widget-border:' + cssValue(c.widgetBorder, 'rgba(0,0,0,0.07)') + ';' +
+            '--bhw-line:' + cssValue(c.line, 'rgba(0,0,0,0.12)') + ';' +
+            '--bhw-soft:' + cssValue(c.soft, 'rgba(0,0,0,0.05)') + ';' +
+            '--bhw-widget-radius:' + num(r.widget, 22) + 'px;' +
+            '--bhw-block-radius:' + num(r.blocks, 12) + 'px;' +
+            '--bhw-padding:' + pad + 'px;' +
+            '--bhw-padding-mobile:' + Math.round(pad * .72) + 'px;' +
+            '--bhw-shadow:' + cssValue(sh.widget, '0 24px 60px -28px rgba(0,0,0,0.28)') + ';' +
+            '}';
+        return id;
     }
 
-    function escapeAttr(text) {
-        return String(text || '').replace(/"/g, '&quot;');
+    function infoHtml(cfg) {
+        var T = cfg._t, logo = safeUrl(cfg.logo), icon = renderIcon(cfg.icon);
+        var tel = String(cfg.phone || '').replace(/[^\d+]/g, ''), web = safeUrl(cfg.website), mail = /^[^\s@<>"]+@[^\s@<>"]+\.[a-z]{2,}$/i.test(cfg.email || '') ? cfg.email : '';
+        var rows = [];
+        if (cfg.address) rows.push('<li class="bhw-row">' + ICON.pin + '<div class="bhw-row-txt">' + escapeHtml(cfg.address) +
+            (cfg.showCopy ? '<br><button class="bhw-copy" type="button">' + ICON.copy + '<span>' + escapeHtml(T.copy) + '</span></button>' : '') + '</div></li>');
+        if (cfg.hours) rows.push('<li class="bhw-row">' + ICON.clock + '<div class="bhw-row-txt">' + escapeHtml(cfg.hours) + '</div></li>');
+        if (tel) rows.push('<li class="bhw-row">' + ICON.phone + '<div class="bhw-row-txt"><a href="tel:' + escapeHtml(tel) + '">' + escapeHtml(cfg.phone) + '</a></div></li>');
+        if (mail && cfg.showEmail) rows.push('<li class="bhw-row">' + ICON.mail + '<div class="bhw-row-txt"><a href="mailto:' + escapeHtml(mail) + '">' + escapeHtml(mail) + '</a></div></li>');
+        if (cfg.note) rows.push('<li class="bhw-row">' + ICON.info + '<div class="bhw-row-txt">' + escapeHtml(cfg.note) + '</div></li>');
+        var btns = [];
+        if (cfg.showDirections && placeQuery(cfg)) btns.push('<a class="bhw-btn bhw-primary" href="' + escapeHtml(directionsUrl(cfg)) + '" target="_blank" rel="noopener">' + ICON.route + '<span>' + escapeHtml(T.directions) + '</span></a>');
+        if (cfg.showCall && tel) btns.push('<a class="bhw-btn" href="tel:' + escapeHtml(tel) + '">' + ICON.phone + '<span>' + escapeHtml(T.call) + '</span></a>');
+        if (cfg.showWebsite && web) btns.push('<a class="bhw-btn" href="' + escapeHtml(web) + '" target="_blank" rel="noopener">' + ICON.web + '<span>' + escapeHtml(T.website) + '</span></a>');
+        return '<div class="bhw-info">' +
+            '<div class="bhw-head">' + (logo ? '<img class="bhw-logo" src="' + escapeHtml(logo) + '" alt="">' : (icon ? '<span class="bhw-icon" aria-hidden="true">' + icon + '</span>' : '')) +
+                '<div style="min-width:0">' + (cfg.name ? '<h3 class="bhw-name">' + escapeHtml(cfg.name) + '</h3>' : '') + (cfg.tagline ? '<p class="bhw-tag">' + escapeHtml(cfg.tagline) + '</p>' : '') + '</div></div>' +
+            (rows.length ? '<ul class="bhw-rows">' + rows.join('') + '</ul>' : '') +
+            (btns.length ? '<div class="bhw-actions">' + btns.join('') + '</div>' : '') +
+        '</div>';
     }
 
-    function showError(container, clientId, message) {
-        container.innerHTML = `
-            <div class="bhw-widget bhw-error">
-                <h3 style="margin: 0 0 15px 0;">🗺️ Map unavailable</h3>
-                <p style="margin: 0; opacity: 0.9; font-size: 0.9em;">ID: ${escapeHtml(clientId)}</p>
-                <details style="margin-top: 15px;">
-                    <summary style="cursor: pointer; opacity: 0.8;">Details</summary>
-                    <p style="margin: 10px 0 0 0; font-size: 0.8em; opacity: 0.7;">${escapeHtml(message)}</p>
-                </details>
-            </div>
-        `;
+    function makeIframe(cfg) {
+        var f = document.createElement('iframe');
+        f.src = srcOf(cfg);
+        f.title = 'Map: ' + (cfg.name || cfg.address || 'location');
+        f.loading = 'lazy';
+        f.referrerPolicy = 'no-referrer-when-downgrade';
+        f.setAttribute('allowfullscreen', '');
+        return f;
+    }
+
+    function mountWidget(cfg, uniqueClass, id, opts) {
+        opts = opts || {};
+        var styleId = applyCustomStyles(uniqueClass, cfg);
+        var layout = ['split', 'stacked', 'overlay'].indexOf(cfg.layout) >= 0 ? cfg.layout : 'split';
+        var root = document.createElement('div');
+        root.id = 'map-widget-' + id;
+        function classes(c) { var l = ['split', 'stacked', 'overlay'].indexOf(c.layout) >= 0 ? c.layout : 'split'; return 'bhw-map bhw-container ' + uniqueClass + ' bhw-' + l + (c.infoPosition === 'right' ? ' bhw-pos-right' : ''); }
+        root.className = classes(cfg);
+        var T = cfg._t;
+        root.innerHTML = '<div class="bhw-widget">' + infoHtml(cfg) + '<div class="bhw-map-box"></div></div>';
+        var box = root.querySelector('.bhw-map-box');
+        var widget = { root: root, config: cfg, id: id, iframe: null };
+        function loadMap() {
+            if (!srcOf(cfg)) return;
+            var f = makeIframe(cfg);
+            box.innerHTML = ''; box.appendChild(f); widget.iframe = f;
+        }
+        if (cfg.clickToLoad) {
+            box.innerHTML = '<div class="bhw-consent"><div class="bhw-consent-in">' + ICON.pin +
+                '<button class="bhw-btn" type="button">' + escapeHtml(T.show) + '</button><p>' + escapeHtml(T.consent) + '</p>' +
+                '<a class="bhw-copy" style="opacity:.7" href="' + escapeHtml(openUrl(cfg)) + '" target="_blank" rel="noopener">' + escapeHtml(T.open) + '</a></div></div>';
+            box.querySelector('.bhw-consent .bhw-btn').addEventListener('click', loadMap);
+        } else loadMap();
+
+        if (opts.inline) opts.inline.appendChild(root);
+        else if (opts.anchor && opts.anchor.parentNode) opts.anchor.parentNode.insertBefore(root, opts.anchor.nextSibling);
+        else document.body.appendChild(root);
+
+        var cleanups = [];
+        function bindCopy() {
+            var copyBtn = root.querySelector('button.bhw-copy'); if (!copyBtn) return;
+            copyBtn.addEventListener('click', function () {
+                var T2 = widget.config._t, done = function () { copyBtn.querySelector('span').textContent = T2.copied; setTimeout(function () { copyBtn.querySelector('span').textContent = T2.copy; }, 1600); };
+                var text = widget.config.address;
+                if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(text).then(done, done);
+                else { var ta = document.createElement('textarea'); ta.value = text; document.body.appendChild(ta); ta.select(); try { document.execCommand('copy'); } catch (e) {} ta.remove(); done(); }
+            });
+        }
+        bindCopy();
+        /* обновление без перезагрузки карты (для превью) */
+        widget.refresh = function (c) {
+            widget.config = c;
+            applyCustomStyles(uniqueClass, c);
+            var narrow = root.classList.contains('bhw-narrow');
+            root.className = classes(c) + (narrow ? ' bhw-narrow' : '');
+            var info = root.querySelector('.bhw-info'), tmp = document.createElement('div');
+            tmp.innerHTML = infoHtml(c); info.replaceWith(tmp.firstChild);
+            bindCopy();
+        };
+        /* узкое место (телефон, узкая колонка темы): карта сверху, карточка снизу */
+        function sizeClass() {
+            var w = opts.inline ? Math.max(0, opts.inline.clientWidth - 32) : (root.clientWidth || 0);
+            root.classList.toggle('bhw-narrow', w > 0 && w < 640);
+        }
+        if (window.ResizeObserver) { var ro = new ResizeObserver(sizeClass); ro.observe(opts.inline || root); cleanups.push(function () { ro.disconnect(); }); }
+        else { window.addEventListener('resize', sizeClass); cleanups.push(function () { window.removeEventListener('resize', sizeClass); }); }
+        sizeClass();
+
+        widget.destroy = function () { cleanups.forEach(function (f) { try { f(); } catch (e) {} }); root.remove(); var s = document.getElementById(styleId); if (s) s.remove(); };
+        return widget;
     }
 })();
