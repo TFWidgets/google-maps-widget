@@ -5,6 +5,7 @@
   Cache-Control: public, max-age=300, s-maxage=300
 
 /embed.js
+  Content-Type: application/javascript; charset=utf-8
   Access-Control-Allow-Origin: *
   Access-Control-Allow-Methods: GET, OPTIONS
   Cache-Control: public, max-age=3600, s-maxage=3600
