@@ -1,28 +1,55 @@
 {
-    "businessName": "Tech Hub Office",
-    "address": "Staroměstské náměstí 1, Prague, Czechia",
-    "coordinates": {
-        "lat": 50.0875,
-        "lng": 14.4213
+  "active": true,
+  "domains": [
+    "tf-widgets.com",
+    "*.tf-widgets.com"
+  ],
+  "layout": "split",
+  "infoPosition": "left",
+  "name": "Old Town Café",
+  "tagline": "Coffee & pastries",
+  "icon": "☕",
+  "logo": "",
+  "address": "Old Town Square, Prague",
+  "mapQuery": "",
+  "zoom": 15,
+  "mapType": "roadmap",
+  "mapHeight": 380,
+  "phone": "+420 123 456 789",
+  "email": "",
+  "website": "",
+  "hours": "Mon–Fri 8:00–19:00\nSat–Sun 9:00–18:00",
+  "note": "Two minutes from the Astronomical Clock",
+  "showDirections": true,
+  "showCall": true,
+  "showWebsite": false,
+  "showEmail": false,
+  "showCopy": true,
+  "clickToLoad": false,
+  "locale": "en",
+  "style": {
+    "fontFamily": "'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif",
+    "colors": {
+      "background": "#ffffff",
+      "text": "#111111",
+      "accent": "#4285f4",
+      "accentText": "#ffffff",
+      "widgetBorder": "rgba(17, 17, 17, 0.07)",
+      "line": "rgba(17, 17, 17, 0.12)",
+      "soft": "rgba(17, 17, 17, 0.05)"
     },
-    "zoom": 15,
-    "phone": "+420 123 456 789",
-    "email": "info@techhub.cz",
-    "website": "https://techhub.cz",
-    "businessHours": "Mon-Fri 9:00-18:00",
-    "parking": "Free for clients",
-    "showDirections": true,
-    "showCall": true,
-    "showWebsite": false,
-    "iconHtml": "&#127970;",
-    "styling": {
-        "primaryColor": "#667eea",
-        "secondaryColor": "#764ba2",
-        "widgetBackground": "#ffffff",
-        "fontFamily": "'Inter', system-ui, sans-serif",
-        "businessNameSize": "1.35em",
-        "directionsColor": "#4285f4",
-        "callColor": "#34a853",
-        "websiteColor": "#6366f1"
+    "borderRadius": {
+      "widget": 22,
+      "blocks": 12
+    },
+    "sizes": {
+      "fontSize": 1,
+      "padding": 28,
+      "width": 1000,
+      "infoWidth": 360
+    },
+    "shadow": {
+      "widget": "0 24px 60px -28px rgba(0, 0, 0, 0.28)"
     }
+  }
 }
